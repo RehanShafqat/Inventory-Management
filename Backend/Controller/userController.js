@@ -36,8 +36,6 @@ export const userLogin = async (req, res, next) => {
         }
     });
 }
-
-
 export const userLogout = (req, res, next) => {
     res.status(200).cookie("admin_token", null, { httpOnly: true, expires: new Date(Date.now()) }).json({
         success: true,
@@ -125,3 +123,18 @@ export const resetPassword = (req, res, next) => {
 
 
 };
+export const isTokenValid = (req, res, next) => {
+    const { token } = req.body;
+    if (!token) {
+        return next(new customError("Token not found", 400));
+    }
+    try {
+        const result = jwt.verify(token, process.env.JWT_KEY)
+        res.status(200).json({
+            success: "true",
+            message: "token is valid"
+        })
+    } catch (error) {
+        return next(new customError("invalid token", 400));
+    }
+}
