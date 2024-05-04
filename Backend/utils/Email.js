@@ -8,28 +8,27 @@ const sendEmail = async (recipientMail, link, res, next) => {
         port: 465,
         secure: true,
         auth: {
-            user: "rehanshafqat2004@gmail.com",
-            pass: "fkej yjlw rixq xcem"
+            user: process.env.SENDER_EMAIL,
+            pass: process.env.SENDER_PASSWORD
         }
-
     })
     const mailOptions = {
         from: {
-            name: "inventory-node",
-            address: "rehanshafqat2004@gmail.com",
+            name: "Admin Password Reset",
+            address: process.env.SENDER_EMAIL,
         },
         to: `rehanshafqat12004@gmail.com`,
-        subject: "Password Reset INVENTORY Management System",
+        subject: "Password Reset Inventory Management System",
         text: ``,
-        html: `<p> ${link} </p>`,
-        attachments: [{}]
+        html: `
+        <b>YOUR RESET PASSWORD LINK</b>
+        <p> ${link} </p>`,
     }
-
-
     try {
         await transporter.sendMail(mailOptions);
-        res.status(200).json({
-            message: "Email sent successfully"
+        res.status(200).json({ // expire after 5 mins
+            message: "Email sent successfully",
+            
         })
     } catch (error) {
         console.log("email not sent");

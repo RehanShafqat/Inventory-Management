@@ -3,10 +3,27 @@ import { useState } from 'react'
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log(`Password reset email sent to: ${email}`);
+        console.log(email);
+        try {
+            const response = await fetch("http://localhost:5000/api/version1/user/admin/forgotPassword/", {
+                method: 'POST',
+                body: JSON.stringify({ email: email }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: "include"
+            });
+            const data = await response.json();
+            console.log(data);
+        }
+
+        catch (error) {
+            console.error('Error:', error.message);
+        }
+
 
     };
     return (

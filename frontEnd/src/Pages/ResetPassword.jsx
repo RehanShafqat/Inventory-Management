@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 const ResetPassword = () => {
     const { token } = useParams();
+    const navigate = useNavigate();
     const [isValidToken, setIsValidToken] = useState(false);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -30,6 +31,8 @@ const ResetPassword = () => {
         checkValidToken();
     }, []);
 
+
+
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
     };
@@ -38,18 +41,32 @@ const ResetPassword = () => {
         setConfirmPassword(e.target.value);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
         // Check if passwords match
         if (password !== confirmPassword) {
             setIsEqual(false);
             return;
         }
+        try {
+            const response = await fetch("http://localhost:5000/api/version1/user/admin/resetPassword/", {
+                method: 'POST',
+                body: JSON.stringify({ token: token, password: password }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
 
-        // Reset password logic here (make API request)
-        console.log('Password:', password);
-        console.log('Confirm Password:', confirmPassword);
+            const data = await response.json();
+            console.log(data);
+            if (data.success === true) {
+                setTimeout(() => {
+                    navigate("/login");
+                }, 3000)
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
     };
 
     return (

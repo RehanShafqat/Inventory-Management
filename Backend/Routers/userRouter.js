@@ -9,7 +9,7 @@ userRouter.post("/admin/register/", userRegistration)
 userRouter.post("/admin/login/", userLogin);
 userRouter.get("/admin/logout/", isAdminAuthenticated, userLogout);
 userRouter.post("/admin/forgotPassword/", forgotPassword);
-userRouter.get("/admin/resetPassword/:token/", resetPassword);
+userRouter.post("/admin/resetPassword/", resetPassword);
 userRouter.post("/admin/isTokenValid/", isTokenValid)
 
 
