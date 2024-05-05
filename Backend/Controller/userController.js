@@ -5,24 +5,25 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import sendEmail from "../utils/Email.js";
 export const userLogin = async (req, res, next) => {
-    const { username, password, admin_id } = req.body;
-    if (!username || !password || !admin_id) {
+    const { email, password } = req.body;
+    if (!email || !password) {
         return next(new customError("Please fill all the fields", 400));
     }
-
-    const findUserQuery = "SELECT * FROM admins WHERE admin_id = ?";
-    db.query(findUserQuery, [admin_id], async (err, result) => {
+    const findUserQuery = "SELECT * FROM users WHERE email = ?";
+    db.query(findUserQuery, [email], async (err, result) => {
         try {
             if (result && result.length > 0) {
+                console.log(result);
                 const hashedpassword = result[0].password;
                 const isPassCorrect = await bcrypt.compare(password, hashedpassword);
-                const isNameCorrect = username == result[0].username ? true : false
-                if (isPassCorrect && isNameCorrect) {
+                const isEmailCorrect = (email == result[0].email) ? true : false
+                if (isPassCorrect && isEmailCorrect) {
                     const user = {
-                        username: result[0].username,
-                        admin_id: result[0].admin_id
-                    };
+                        id: result[0].user_id,
+                        role: result[0].role,
+                        email: result[0].email
 
+                    };
                     generateWebToken(res, user);
                 } else {
                     return next(new customError("Wrong Username or Password", 400));
@@ -115,4 +116,34 @@ export const isTokenValid = (req, res, next) => {
     } catch (error) {
         return next(new customError("invalid token", 400));
     }
+} // it is to check during reset password
+
+export const adminDelete = (req, res, next) => {
+    const { user_id } = req.body
+    if (!user_id) {
+        return next(new customError("user_id not found", 404));
+    }
+    const DELETE_QUERY = "DELETE FROM users WHERE user_id = ?";
+    db.query(DELETE_QUERY, [user_id], (error, result) => {
+        if (error) {
+            return next(new customError(error.message, 400));
+        }
+        res.status(200).json({
+            success: true,
+            message: "user deleted successfully",
+            result
+        })
+    })
+}
+export const getAdmins = (req, res, next) => {
+    const query = "SELECT*FROM users where role = ?";
+    db.query(query, ["admin"], (err, result) => {
+        if (err) {
+            return next(new customError(err.message, 400));
+        }
+        res.status(200).json({
+            success: true,
+            adminsList: result
+        })
+    })
 }

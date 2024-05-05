@@ -5,20 +5,18 @@ import db from "../Config/dbConnection.js";
 export const isAdminAuthenticated = async (req, res, next) => {
     //authentication
     try {
-        const token = req.cookies.admin_token;
+        const token = req.cookies.adminToken;
         if (!token) {
-            return next(new customError("Admin not authenticated", 400));
+            return next(new customError("You are not authenticated", 400));
         }
         const decoded = jwt.verify(token, process.env.JWT_KEY);
-        const findUserQuery = "SELECT * FROM admins WHERE admin_id = ?";
+        const findUserQuery = "SELECT * FROM users WHERE user_id = ? and role = ?";
 
-        db.query(findUserQuery, ["205057"], async (err, result) => {
+        db.query(findUserQuery, [decoded.id, "admin"], async (err, result) => {
             if (!result) {
-                return next(new customError("You are not authorised", 400));
+                return next(new customError("You are not authenticated", 400));
             }
-            else {
-                next();
-            }
+            next();
         });
     } catch (error) {
         return next(new customError(error.message, 400));

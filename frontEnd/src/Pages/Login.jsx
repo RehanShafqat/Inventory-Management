@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -21,7 +22,16 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        const toastID = toast.loading("Signing in....", {
+            style: {
+                minWidth: '240px', // Set minimum width
+                minHeight: '40px',
+                fontSize: "18px",
+                fontWeight: "bolder",
+                border: '1px solid #713200',
+                // Set minimum height
+            },
+        });
         try {
             const response = await fetch("http://localhost:5000/api/version1/user/admin/login", {
                 method: 'POST',
@@ -33,19 +43,32 @@ const Login = () => {
             });
 
             const data = await response.json();
-            console.log(data.message);
-            if (data.success == "true") {
-                navigate("/home");
-            }
+            console.log(data);
+            setTimeout(() => {
+                if (data.success == 'true') {
+                    toast.success("Login Succesfull", {
+                        id: toastID,
+                    });
+                    navigate("/home");
+                }
+            }, [3000])
+            setTimeout(() => {
+                if (data.success == 'false') {
+                    toast.error(data.message, {
+                        id: toastID,
+                    });
+                    setIsInvalid(data.message);
+                }
+            }, [3000])
 
-            if (data.success == false) {
-                setIsInvalid(data.message);
-
-            }
 
 
         } catch (error) {
+            toast.error(error.message, {
+                id: toastID,
+            });
             console.error('Error:', error);
+
         }
 
 

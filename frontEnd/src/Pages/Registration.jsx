@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { toast } from 'react-hot-toast';
+import 'react-toastify/dist/ReactToastify.css';
 const Registration = () => {
     const [imageUrl, setImageUrl] = useState(null);
-
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -31,35 +31,43 @@ const Registration = () => {
     const uploadImageToCloudinary = async () => {
         try {
             if (imageFile) {
-
                 const formData = new FormData();
                 formData.append('file', imageFile);
-                formData.append("upload_preset", "Inventory_management");
-                const cloudName = "driuxeclu";
+                formData.append('upload_preset', 'Inventory_management');
+                const cloudName = 'driuxeclu';
 
                 const response = await fetch(
                     `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
                     {
-                        method: "POST",
-                        body: formData
+                        method: 'POST',
+                        body: formData,
                     }
-                )
+                );
                 const data = await response.json();
+                console.log(data.url);
                 return data.url;
             }
-            else {
-                return null;
-            }
+            return null;
         } catch (error) {
             console.error('Error uploading image to Cloudinary:', error);
             return null;
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleUploading = async () => {
 
+        const toastID = toast.loading("Registering....", {
+            style: {
+                minWidth: '240px', // Set minimum width
+                minHeight: '40px',
+                fontSize:"18px",
+                fontWeight:"bolder",
+                border: '1px solid #713200',
+                 // Set minimum height
+            },
+        });
         try {
+
             const imageUrl = await uploadImageToCloudinary();
             const formDataWithImage = {
                 ...formData,
@@ -71,22 +79,40 @@ const Registration = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formDataWithImage)
             };
+
             const response = await fetch('http://localhost:5000/api/version1/user/admin/register', requestOptions);
             const data = await response.json();
 
-            console.log(data); // Log the entire response data for debugging
+            console.log(data);
 
             if (data && data.RESULT && data.RESULT.insertId) {
-                setInsertId(data.result.insertId);
+                toast.success("Registration Succesfull", {
+                    id: toastID,
+                });
+                setInsertId(data.RESULT.insertId);
             } else {
-                console.error('Data or insertId not found in response:', data);
-            }
 
+                toast.error(data.message, {
+                    id: toastID,
+                });
+
+            }
+            return data; // Return the response data
         } catch (error) {
             console.error('Error:', error);
+            toast.error(error.message, {
+                id: toastID,
+            });
         }
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+
+        handleUploading();
+
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">

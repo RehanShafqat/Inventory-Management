@@ -6,6 +6,7 @@ import morgan from "morgan";
 import userRouter from "./Routers/userRouter.js"
 import { errorMiddleware } from "./Middlewares/Error.js";
 import cookieParser from "cookie-parser";
+import inventoryRouter from "./Routers/InventoryRouters.js";
 const app = express();
 config({ path: "./Config/.env" })
 
@@ -33,6 +34,7 @@ app.use(cookieParser())
 
 // routers
 app.use("/api/version1/user", userRouter)
+app.use("/api/version1/inventory", inventoryRouter)
 
 
 
