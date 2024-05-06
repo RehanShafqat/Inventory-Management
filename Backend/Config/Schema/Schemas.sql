@@ -20,3 +20,14 @@
 --   name VARCHAR(255) NOT NULL
 -- );
 
+
+-- CREATE TABLE products (
+--   product_id INT AUTO_INCREMENT PRIMARY KEY,
+--   supplier_NTN VARCHAR(20) NOT NULL,
+--   name VARCHAR(255) NOT NULL,
+--   price DECIMAL(10, 2) NOT NULL,
+--   selling_price DECIMAL(10, 2) NOT NULL,
+--   image_url VARCHAR(1000) ,
+--   category_id INT,
+--   FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE
+-- );
