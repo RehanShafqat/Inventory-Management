@@ -62,6 +62,7 @@ export const forgotPassword = (req, res, next) => {
         sendEmail(email, link, res, next);
     })
 }
+// it is to reset password using jwt token and for the session
 export const resetPassword = async (req, res, next) => {
     const { token, password } = req.body;
     if (!token || !password) {
@@ -91,7 +92,6 @@ export const resetPassword = async (req, res, next) => {
                 if (err) {
                     return next(new customError(err.message, 400));
                 }
-
                 res.status(200).json({
                     success: true,
                     message: "Password updated successfully"
@@ -147,3 +147,16 @@ export const getAdmins = (req, res, next) => {
         })
     })
 }
+export const addAdmin = (req, res, next) => {
+    //manager adds a new admin
+}
+
+export const removeAdmin = (req, res, next) => {
+    //manager removes the admin 
+}
+export const seeAllAdmins = () =>{
+    
+}
+
+
+
