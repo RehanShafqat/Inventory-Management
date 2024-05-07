@@ -6,27 +6,30 @@ import { isManagerAuthenticated } from "../Middlewares/isManagerAuthenticated.js
 const userRouter = express.Router();
 
 //manager routers
-userRouter.post("/manager/admin/register/", isManagerAuthenticated, userRegistration)
 userRouter.post("/manager/admin/delete", isManagerAuthenticated, adminDelete)
 userRouter.get("/manager/getAdmins", isManagerAuthenticated, getAdmins)
 
 
 
+//customer registration
+userRouter.post("/customer/register/", userRegistration)
 
 
+
+
+//login for all the entities
 userRouter.post("/login/", userLogin);
 
 
 
+
+
 // admin routers
-userRouter.get("/admin/logout/", isAdminAuthenticated, userLogout); //good
-userRouter.post("/admin/forgotPassword/", forgotPassword); // good
-userRouter.post("/admin/resetPassword/", resetPassword);//good
-userRouter.post("/admin/isTokenValid/", isTokenValid) // good
+userRouter.get("/logout/", userLogout); //good
+userRouter.post("/forgotPassword/", forgotPassword); // good
+userRouter.post("/resetPassword/", resetPassword);//good
+userRouter.post("/isTokenValid/", isTokenValid) // good
 
-// userRouter.post("/test", isManagerAuthenticated);
-
-// userRouter.get("/admin/check/", isAdminAuthenticated);
 
 
 export default userRouter

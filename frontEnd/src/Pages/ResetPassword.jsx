@@ -13,7 +13,7 @@ const ResetPassword = () => {
     useEffect(() => {
         const checkValidToken = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/version1/user/admin/isTokenValid/", {
+                const response = await fetch("http://localhost:5000/api/version1/user/isTokenValid/", {
                     method: 'POST',
                     body: JSON.stringify({ token: token }),
                     headers: {
@@ -49,7 +49,7 @@ const ResetPassword = () => {
             return;
         }
         try {
-            const response = await fetch("http://localhost:5000/api/version1/user/admin/resetPassword/", {
+            const response = await fetch("http://localhost:5000/api/version1/user/resetPassword/", {
                 method: 'POST',
                 body: JSON.stringify({ token: token, password: password }),
                 headers: {

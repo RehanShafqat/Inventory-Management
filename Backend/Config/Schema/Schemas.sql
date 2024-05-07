@@ -29,5 +29,28 @@
 --   selling_price DECIMAL(10, 2) NOT NULL,
 --   image_url VARCHAR(1000) ,
 --   category_id INT,
+--   quantity INT NOT NULL,
 --   FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE
+-- );
+
+
+
+-- CREATE TABLE orders (
+--   order_id INT AUTO_INCREMENT PRIMARY KEY,
+--   order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--   user_id INT,         -- Foreign key referencing the users table for customers/admins
+--   status ENUM('pending', 'confirmed', 'shipped', 'delivered') DEFAULT 'pending',
+--   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+-- );
+
+
+-- CREATE TABLE order_product_details (
+--   detail_id INT AUTO_INCREMENT PRIMARY KEY,
+--   order_id INT,          -- Foreign key referencing the orders table
+--   product_id INT,        -- Foreign key referencing the products table
+--   quantity INT,          -- Quantity of the product ordered
+--   supplier_NTN varchar(255),       -- Foreign key referencing the suppliers table
+--   FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+--   FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+--   FOREIGN KEY (supplier_NTN) REFERENCES suppliers(NTN_number) ON DELETE CASCADE
 -- );

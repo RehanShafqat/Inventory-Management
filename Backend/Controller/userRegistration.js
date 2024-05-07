@@ -20,7 +20,7 @@ export const userRegistration = async (req, res, next) => {
             }
             const hashedPassword = await bcrypt.hash(password.toString(), 10);
             const insertUserQuery = "INSERT INTO users (`email`, `role`, `image_URL` ,`password`, `username`) VALUES (?,?,?,?,?)";
-            const insertValues = [email, "admin", image_URL, hashedPassword, username];
+            const insertValues = [email, "customer", image_URL, hashedPassword, username];
             db.query(insertUserQuery, insertValues, (ERROR, RESULT) => {
                 if (ERROR) {
                     return next(new customError(ERROR.message, 500));
@@ -28,7 +28,7 @@ export const userRegistration = async (req, res, next) => {
                 return res.status(200).json({
                     success: true,
                     RESULT,
-                    message: "User registered successfully"
+                    message: "Customer registered successfully"
                 });
             })
         });

@@ -5,7 +5,7 @@ import db from "../Config/dbConnection.js";
 export const isAdminAuthenticated = async (req, res, next) => {
     //authentication
     try {
-        const token = req.cookies.adminToken;
+        const token = req.cookies.access_token;
         if (!token) {
             return next(new customError("You are not authenticated", 400));
         }

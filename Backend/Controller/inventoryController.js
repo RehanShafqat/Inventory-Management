@@ -49,7 +49,6 @@ export const addSupplier = (req, res, next) => {
                         db.rollback();
                         return next(new customError(err.message, 400)); // Bad request
                     }
-
                     res.status(200).json({ success: true, message: 'Supplier added successfully' });
                 });
             });
@@ -96,7 +95,6 @@ export const addProduct = async (req, res, next) => {
         return next(new customError("Provide all the fields", 400))
     }
     db.beginTransaction();
-
     // Check if a product with the same name already exists
     const checkProductQuery = `
         SELECT *FROM products WHERE name = ?`;
@@ -166,7 +164,6 @@ export const addProduct = async (req, res, next) => {
                         await db.rollback();
                         return next(new customError(insertError.message, 400))
                     }
-
                     const productId = result.insertId;
 
                     await db.commit();
@@ -182,3 +179,82 @@ export const addProduct = async (req, res, next) => {
 
 
 };
+export const placeOrder = async (req, res, next) => {
+    const { user_id, products } = req.body;
+
+    try {
+        // Begin a transaction
+        await db.beginTransaction();
+
+        // Insert into orders table
+        const orderResult = await new Promise((resolve, reject) => {
+            db.query('INSERT INTO orders (order_date, user_id) VALUES (NOW(), ?)', [user_id], (err, result) => {
+                if (err) {
+                    return reject(new customError(err.message, 400));
+                }
+                resolve(result);
+            });
+        });
+
+        const orderId = orderResult.insertId;
+
+        //use of promises for better asynchronous handling
+        const insertPromises = [];
+        for (const [product_id, quantity] of Object.entries(products)) {
+            // Retrieve supplier NTN for the product
+            const supplierNTN = await new Promise((resolve, reject) => {
+                const sql = 'SELECT supplier_NTN FROM products WHERE product_id = ?';
+                db.query(sql, [product_id], (err, result) => {
+                    if (err) {
+                        return reject(new customError(err.message, 400));
+                    }
+                    if (result.length === 0) {
+                        return reject(new customError(`No product found for the product id: ${product_id}`, 404));
+                    }
+                    resolve(result[0].supplier_NTN);
+                });
+            });
+
+            // Check if supplierNTN is valid (exists in suppliers table)
+            const supplier_NTN = await new Promise((resolve, reject) => {
+                const checkSql = 'SELECT * FROM products WHERE supplier_NTN = ?';
+                db.query(checkSql, [supplierNTN], (err, result) => {
+                    if (err) {
+                        reject(new customError(err.message, 400));
+                    }
+                    if (result.length === 0) {
+                        reject(null);
+                    }
+                    resolve(supplierNTN); // Resolve true if supplier exists, false otherwise
+                });
+            });
+
+            if (!supplier_NTN) {
+                return new customError(`Supplier with NTN ${supplierNTN} not found`, 404);
+            }
+            // Insert into order_product_details table
+            const insertDetailPromise = new Promise((resolve, reject) => {
+                const sql = 'INSERT INTO order_product_details (order_id, product_id, quantity, supplier_NTN) VALUES (?, ?, ?, ?)';
+                db.query(sql, [orderId, product_id, quantity, supplier_NTN], (err, result) => {
+                    if (err) {
+                        return reject(new customError(err.message, 400));
+                    }
+                    resolve(result);
+                });
+            });
+            insertPromises.push(insertDetailPromise);
+        }
+
+        // Wait for all product insertions to complete
+        await Promise.all(insertPromises);
+        await db.commit();
+        res.status(200).json({
+            success: true,
+            message: 'Order placed successfully'
+        });
+    } catch (error) {
+        await db.rollback();
+        return next(new customError(error.message, 400))
+    }
+};
+
