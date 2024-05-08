@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer"
 import customError from "../Middlewares/Error.js"
-const sendEmail = async (recipientMail, link, res, next) => {
+const sendEmail = async (recipientMail, subject, html, link) => {
     //create a transporter (a service that will send email)
     const transporter = new nodemailer.createTransport({
         service: "gmail",
@@ -14,26 +14,18 @@ const sendEmail = async (recipientMail, link, res, next) => {
     })
     const mailOptions = {
         from: {
-            name: "Admin Password Reset",
+            name: "Admin Inventory Management",
             address: process.env.SENDER_EMAIL,
         },
-        to: `rehanshafqat12004@gmail.com`,
-        subject: "Password Reset Inventory Management System",
+        to: `${recipientMail}`,
+        subject: `${subject}`,
         text: ``,
-        html: `
-        <b>YOUR RESET PASSWORD LINK</b>
-        <p> ${link} </p>`,
+        html: `${html}`,
     }
     try {
         await transporter.sendMail(mailOptions);
-        res.status(200).json({ // expire after 5 mins
-            message: "Email sent successfully",
-            
-        })
     } catch (error) {
         console.log("email not sent");
-        return next(new customError(error, 400));
-
     }
 }
 export default sendEmail;

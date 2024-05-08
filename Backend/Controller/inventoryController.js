@@ -1,7 +1,8 @@
 import customError from "../Middlewares/Error.js";
 import db from "../Config/dbConnection.js";
-
-
+import nodemailer from "nodemailer"
+import sendEmail from "../utils/Email.js";
+import jwt from "jsonwebtoken"
 export const addSupplier = (req, res, next) => {
     const { NTN_number, email, name, categories_supplied } = req.body;
 
@@ -179,7 +180,7 @@ export const addProduct = async (req, res, next) => {
 
 
 };
-export const placeOrder = async (req, res, next) => {
+export const supplierOrder = async (req, res, next) => {
     const { user_id, products } = req.body;
 
     try {
@@ -188,73 +189,155 @@ export const placeOrder = async (req, res, next) => {
 
         // Insert into orders table
         const orderResult = await new Promise((resolve, reject) => {
-            db.query('INSERT INTO orders (order_date, user_id) VALUES (NOW(), ?)', [user_id], (err, result) => {
-                if (err) {
-                    return reject(new customError(err.message, 400));
+            db.query(
+                'INSERT INTO orders (order_date, user_id) VALUES (NOW(), ?)',
+                [user_id],
+                (err, result) => {
+                    if (err) {
+                        return reject(new customError(err.message, 400));
+                    }
+                    resolve(result);
                 }
-                resolve(result);
-            });
+            );
         });
 
         const orderId = orderResult.insertId;
 
-        //use of promises for better asynchronous handling
-        const insertPromises = [];
+        // Collect products by supplier
+        const productsBySupplier = {};
+
         for (const [product_id, quantity] of Object.entries(products)) {
-            // Retrieve supplier NTN for the product
-            const supplierNTN = await new Promise((resolve, reject) => {
-                const sql = 'SELECT supplier_NTN FROM products WHERE product_id = ?';
+            // Retrieve supplier NTN and product details
+            const productResult = await new Promise((resolve, reject) => {
+                const sql =
+                    'SELECT p.name, p.supplier_NTN, s.email FROM products p INNER JOIN suppliers s ON p.supplier_NTN = s.NTN_number WHERE p.product_id = ?';
                 db.query(sql, [product_id], (err, result) => {
                     if (err) {
                         return reject(new customError(err.message, 400));
                     }
                     if (result.length === 0) {
-                        return reject(new customError(`No product found for the product id: ${product_id}`, 404));
+                        return reject(
+                            new customError(`No product found for the product id: ${product_id}`, 404)
+                        );
                     }
-                    resolve(result[0].supplier_NTN);
+                    resolve(result[0]);
                 });
             });
 
-            // Check if supplierNTN is valid (exists in suppliers table)
-            const supplier_NTN = await new Promise((resolve, reject) => {
-                const checkSql = 'SELECT * FROM products WHERE supplier_NTN = ?';
-                db.query(checkSql, [supplierNTN], (err, result) => {
-                    if (err) {
-                        reject(new customError(err.message, 400));
-                    }
-                    if (result.length === 0) {
-                        reject(null);
-                    }
-                    resolve(supplierNTN); // Resolve true if supplier exists, false otherwise
-                });
-            });
+            const { name, supplier_NTN, email } = productResult;
 
-            if (!supplier_NTN) {
-                return new customError(`Supplier with NTN ${supplierNTN} not found`, 404);
-            }
             // Insert into order_product_details table
-            const insertDetailPromise = new Promise((resolve, reject) => {
-                const sql = 'INSERT INTO order_product_details (order_id, product_id, quantity, supplier_NTN) VALUES (?, ?, ?, ?)';
+            const order_product_details = await new Promise((resolve, reject) => {
+                const sql =
+                    'INSERT INTO order_product_details (order_id, product_id, quantity, supplier_NTN) VALUES (?, ?, ?, ?)';
                 db.query(sql, [orderId, product_id, quantity, supplier_NTN], (err, result) => {
                     if (err) {
                         return reject(new customError(err.message, 400));
                     }
-                    resolve(result);
+                    resolve(result); // Resolve with the entire result to capture insertId
                 });
             });
-            insertPromises.push(insertDetailPromise);
-        }
 
-        // Wait for all product insertions to complete
-        await Promise.all(insertPromises);
+            const detail_id = order_product_details.insertId; // Capture the insertId
+
+            if (!productsBySupplier[supplier_NTN]) {
+                productsBySupplier[supplier_NTN] = {
+                    email,
+                    products: [],
+                };
+            }
+            console.log(supplier_NTN);
+            productsBySupplier[supplier_NTN].products.push({ product_name: name, quantity, }); // added product for same supplier 
+        }
+        // Commit transaction
+        console.log(productsBySupplier);
+        // Send emails to suppliers
+        await Promise.all(
+            Object.entries(productsBySupplier).map(async ([supplier_NTN, { email, products }]) => {
+                const productsListHtml = products.map(({ product_name, quantity }) => `<li>${product_name} - ${quantity}</li>`).join('');
+                const link = `localhost:5000/api/version1/inventory/supplier/updateOrder/${orderId}/${supplier_NTN}`;
+                // Send single email to supplier with all products
+                await sendEmail(email, "Products Order Notification", `<h2>Products Order Notification</h2><p>Please supply the following products:</p> <ul>${productsListHtml}</ul>
+                <b> CLICK THIS LINK FOR CONFIRMATION OF SENT <br> ${link}  </b>
+
+                `);
+            })
+        );
         await db.commit();
         res.status(200).json({
             success: true,
-            message: 'Order placed successfully'
+            message: 'Order placed successfully',
         });
     } catch (error) {
-        await db.rollback();
-        return next(new customError(error.message, 400))
+        db.rollback();
+        return next(new customError(error.message, 400));
     }
 };
 
+
+
+
+
+
+
+export const updateSupplierOrder = (req, res, next) => {
+    const { supplier_NTN, order_id } = req.params;
+    if (!supplier_NTN || !order_id) {
+        return next(new customError("not all values gained", 404));
+    }
+    db.beginTransaction();
+    try {
+        const query1 = "select*from order_product_details where order_id = ? and supplier_NTN = ? ";
+        db.query(query1, [order_id, supplier_NTN], (err, result) => {
+            if (err) {
+                db.rollback();
+                return next(new customError(err.message, 400))
+            }
+            console.log(result[0]);
+            for (const instance of result) {
+                const query = "update products set quantity = quantity + ? where product_id = ?  "
+                db.query(query, [instance.quantity, instance.product_id], (error, result) => {
+                    if (error) {
+                        db.rollback();
+                        return next(new customError(error.message, 400));
+                    }
+                })
+            }
+        })
+        //delete the orders_product_details for a particular supplier (the supplier has supplied all its products in a particular order .. other supplier products may not be supplied for that order)
+        const deleteQuery = "delete from order_product_details where supplier_NTN = ? and order_id = ? "
+        db.query(deleteQuery, [supplier_NTN, order_id], (err, result) => {
+            if (err) {
+                db.rollback();
+                return next(new customError(err.message, 400));
+            }
+        })
+        //check if all the suppliers have supplied their products for a particular order 
+        const query3 = "select*from order_product_details where order_id = ? "
+        db.query(query3, [order_id], (error, result) => {
+            if (error) {
+                db.rollback();
+                return next(new customError(error.message, 400));
+            }
+            if (result.length === 0) {    //means the order is completed and all suppliers have supplied their products
+
+                const query4 = "update orders set status = ? where order_id = ? ";
+                db.query(query4, ["delivered", order_id], (error, result) => {
+                    if (error) {
+                        db.rollback();
+                        return next(new customError(error.message, 400));
+                    }
+                })
+                db.commit();
+            }
+            res.status(200).json({
+                success: true,
+                message: "Order Delivered successfully"
+            })
+        })
+
+    } catch (error) {
+        db.rollback();
+        return next(new customError(error.message, 400))
+    }
+}

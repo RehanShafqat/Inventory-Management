@@ -31,6 +31,7 @@
 --   category_id INT,
 --   quantity INT NOT NULL,
 --   FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE
+--   FOREIGN KEY (supplier_NTN) REFERENCES suppliers(NTN_number) ON DELETE CASCADE
 -- );
 
 
