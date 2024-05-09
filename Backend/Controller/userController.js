@@ -23,6 +23,7 @@ export const userLogin = async (req, res, next) => {
                         email: result[0].email
 
                     };
+                   
                     generateWebToken(res, user);
                 } else {
                     return next(new customError("Wrong Username or Password", 400));

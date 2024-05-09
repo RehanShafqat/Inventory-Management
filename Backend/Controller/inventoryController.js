@@ -1,8 +1,9 @@
 import customError from "../Middlewares/Error.js";
 import db from "../Config/dbConnection.js";
-import nodemailer from "nodemailer"
 import sendEmail from "../utils/Email.js";
-import jwt from "jsonwebtoken"
+
+
+
 export const addSupplier = (req, res, next) => {
     const { NTN_number, email, name, categories_supplied } = req.body;
 
@@ -56,6 +57,7 @@ export const addSupplier = (req, res, next) => {
         });
     });
 };
+
 export const removeSupplier = (req, res, next) => {
     const { NTN_number } = req.body;
 
@@ -88,6 +90,7 @@ export const removeSupplier = (req, res, next) => {
 // 2. check if the category specified exists in the category table 
 // 3. check if the supplier specified supplies the particular category 
 // if all three are fullfilled then product can be added otherwise it can't be added
+
 export const addProduct = async (req, res, next) => {
     // Check if required fields are provided
     const { supplier_NTN, name, price, selling_price, image_url, category_name } = req.body;
@@ -180,6 +183,7 @@ export const addProduct = async (req, res, next) => {
 
 
 };
+
 export const supplierOrder = async (req, res, next) => {
     const { user_id, products } = req.body;
 
@@ -246,11 +250,8 @@ export const supplierOrder = async (req, res, next) => {
                     products: [],
                 };
             }
-            console.log(supplier_NTN);
             productsBySupplier[supplier_NTN].products.push({ product_name: name, quantity, }); // added product for same supplier 
         }
-        // Commit transaction
-        console.log(productsBySupplier);
         // Send emails to suppliers
         await Promise.all(
             Object.entries(productsBySupplier).map(async ([supplier_NTN, { email, products }]) => {
@@ -263,6 +264,7 @@ export const supplierOrder = async (req, res, next) => {
                 `);
             })
         );
+        //commit db
         await db.commit();
         res.status(200).json({
             success: true,
@@ -273,12 +275,6 @@ export const supplierOrder = async (req, res, next) => {
         return next(new customError(error.message, 400));
     }
 };
-
-
-
-
-
-
 
 export const updateSupplierOrder = (req, res, next) => {
     const { supplier_NTN, order_id } = req.params;
@@ -293,7 +289,6 @@ export const updateSupplierOrder = (req, res, next) => {
                 db.rollback();
                 return next(new customError(err.message, 400))
             }
-            console.log(result[0]);
             for (const instance of result) {
                 const query = "update products set quantity = quantity + ? where product_id = ?  "
                 db.query(query, [instance.quantity, instance.product_id], (error, result) => {
@@ -341,3 +336,100 @@ export const updateSupplierOrder = (req, res, next) => {
         return next(new customError(error.message, 400))
     }
 }
+export const customerOrder = async (req, res, next) => {
+    const { user_id, products } = req.body;
+
+    try {
+        // Begin a transaction
+        await db.beginTransaction();
+
+        // Insert into orders table
+        const orderResult = await new Promise((resolve, reject) => {
+            db.query(
+                'INSERT INTO orders (order_date, user_id) VALUES (NOW(), ?)',
+                [user_id],
+                (err, result) => {
+                    if (err) {
+                        return reject(new customError(err.message, 400));
+                    }
+                    resolve(result);
+                }
+            );
+        });
+
+        const orderId = orderResult.insertId;
+
+        // Insert products into order_product_details table
+        const productEntries = Object.entries(products);
+        for (const [product_id, quantity] of productEntries) {
+            // Insert product details into order_product_details
+            await new Promise((resolve, reject) => {
+                db.query(
+                    'INSERT INTO order_product_details (order_id, product_id, quantity) VALUES (?, ?, ?)',
+                    [orderId, product_id, quantity],
+                    (err, result) => {
+                        if (err) {
+                            return reject(new customError(err.message, 400));
+                        }
+                        resolve(result);
+                    }
+                );
+            });
+        }
+
+        // Commit the transaction
+        await db.commit();
+
+        res.status(200).json({
+            success: true,
+            message: 'Order placed successfully',
+            order_id: orderId
+        });
+    } catch (error) {
+        // Rollback transaction on error
+        await db.rollback();
+        return next(new customError(error.message, 400));
+    }
+};
+export const updateCustomerOrder = async (req, res, next) => {
+    const { order_id, status } = req.body;
+
+    try {
+        // Validate the status value against enum types defined in the database schema
+        const validStatusValues = ['pending', 'confirmed', 'shipped', 'delivered'];
+        if (!validStatusValues.includes(status)) {
+            return next(new customError(`Invalid status value: ${status}. Allowed values: ${validStatusValues.join(', ')}`, 400));
+        }
+
+        // Begin a transaction
+        await db.beginTransaction();
+
+        // Update the status of the order in the database
+        const updateOrderStatusQuery = `
+            UPDATE orders
+            SET status = ?
+            WHERE order_id = ?
+        `;
+        await new Promise((resolve, reject) => {
+            db.query(updateOrderStatusQuery, [status, order_id], (err, result) => {
+                if (err) {
+                    return next(new customError(err.message, 400));
+                }
+                resolve(result);
+            });
+        });
+
+        // Commit the transaction
+        await db.commit();
+
+        res.status(200).json({
+            success: true,
+            message: 'Order status updated successfully',
+            order_id: order_id,
+            new_status: status
+        });
+    } catch (error) {
+        await db.rollback();
+        return next(new customError(error.message, 400));
+    }
+};

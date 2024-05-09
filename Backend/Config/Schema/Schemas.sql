@@ -45,6 +45,9 @@
 -- );
 
 
+
+
+
 -- CREATE TABLE order_product_details (
 --   detail_id INT AUTO_INCREMENT PRIMARY KEY,
 --   order_id INT,          -- Foreign key referencing the orders table
