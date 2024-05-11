@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer"
 import customError from "../Middlewares/Error.js"
-const sendEmail = async (recipientMail, subject, html, link) => {
+const sendEmail = async (recipientMail, subject, html) => {
     //create a transporter (a service that will send email)
     const transporter = new nodemailer.createTransport({
         service: "gmail",

@@ -23,7 +23,7 @@ export const userLogin = async (req, res, next) => {
                         email: result[0].email
 
                     };
-                   
+
                     generateWebToken(res, user);
                 } else {
                     return next(new customError("Wrong Username or Password", 400));
@@ -60,8 +60,30 @@ export const forgotPassword = (req, res, next) => {
         const email = result[0].email;
         const token = jwt.sign({ id: user_id }, process.env.JWT_KEY, { expiresIn: "5m" })
         const link = `${process.env.CLIENT_URL}/reset/${token}`
-        sendEmail(email, link, res, next);
+        await sendEmail(email, "Password reset", `<html lang="en">
+
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+
+    <div style="max-width: 600px; margin: 0 auto; background-color: #f7f7f7; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h2 style="text-align: center; color: #333;">Password Reset</h2>
+        <p style="font-size: 16px; color: #666; text-align: center;">You have requested a password reset. Please click the button below to reset your password:</p>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href=${link} style="display: inline-block; background-color: #007bff; color: #fff; text-decoration: none; font-size: 16px; padding: 12px 24px; border-radius: 4px;">Reset Password</a>
+        </div>
+        
+        <p style="font-size: 14px; color: #888; text-align: center; margin-top: 20px;">If you did not request a password reset, please ignore this email. No changes will be made to your account.</p>
+    </div>
+
+</body>
+</html>` );
     })
+    res.status(200).json({
+        success: true,
+        message: "Email sent successfully"
+    })
+
+
 }
 // it is to reset password using jwt token and for the session
 export const resetPassword = async (req, res, next) => {
