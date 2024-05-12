@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { isAdminAuthenticated } from "../Middlewares/isAdminAuthorised.js";
-import { addProduct, addSupplier, supplierOrder, removeSupplier, updateSupplierOrder, customerOrder, updateCustomerOrder } from "../Controller/inventoryController.js";
+import { addProduct, addSupplier, supplierOrder, removeSupplier, updateSupplierOrder, customerOrder, updateCustomerOrder, getSoldData } from "../Controller/inventoryController.js";
 const inventoryRouter = new Router();
 inventoryRouter.post("/addSupplier", isAdminAuthenticated, addSupplier)
 inventoryRouter.post("/removeSupplier", isAdminAuthenticated, removeSupplier) // requiers NTN_number of supplier
@@ -8,7 +8,8 @@ inventoryRouter.post("/addProduct", isAdminAuthenticated, addProduct) // just ad
 inventoryRouter.post("/suplier/order", isAdminAuthenticated, supplierOrder)
 inventoryRouter.get("/supplier/updateOrder/:order_id/:supplier_NTN", updateSupplierOrder) // updates supplier
 inventoryRouter.post("/customer/order", customerOrder);
-inventoryRouter.post("/customer/updateOrder", isAdminAuthenticated, updateCustomerOrder);
+inventoryRouter.post("/customer/updateOrder/", isAdminAuthenticated, updateCustomerOrder);
+inventoryRouter.get("/most-sold-categories/", getSoldData)
 
 
 // inventoryRouter.

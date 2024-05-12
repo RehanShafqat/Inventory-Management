@@ -1,3 +1,4 @@
+import BarChart from "../Components/BarChart.jsx";
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 const Home = () => {
@@ -30,7 +31,10 @@ const Home = () => {
                 <button className='bg-red-500 text-white px-4 py-4 rounded-md ml-10' onClick={handleLogout}>
                     Logout
                 </button>
+                <br />
+                <BarChart />
             </>
+
 
 
 

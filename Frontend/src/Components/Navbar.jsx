@@ -101,7 +101,7 @@ import CloseIcon from '@mui/icons-material/Close'; const Navbar = () => {
                             </label>
                         </div>
                         <div className="relative ml-4">
-                            <div className="cursor-pointer w-12 h-12 bg-cover bg-center " onClick={handleAvatarClick} style={
+                            <div className="cursor-pointer w-12 h-12 mr-2 bg-cover bg-center " onClick={handleAvatarClick} style={
                                 {
                                     backgroundImage: `url("https://react-demo.tailadmin.com/assets/user-01-b007ff3f.png")`
                                 }

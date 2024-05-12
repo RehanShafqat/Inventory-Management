@@ -433,3 +433,25 @@ export const updateCustomerOrder = async (req, res, next) => {
         return next(new customError(error.message, 400));
     }
 };
+
+export const getSoldData = async (req, res, next) => {
+    db.query(
+        "SELECT c.name AS category_name, SUM(opd.quantity) AS total_sold " +
+        "FROM order_product_details opd " +
+        "JOIN products p ON opd.product_id = p.product_id " +
+        "JOIN categories c ON p.category_id = c.category_id " +
+        "JOIN orders o ON opd.order_id = o.order_id " +
+        "WHERE o.status = 'delivered' " +
+        "GROUP BY c.name " +
+        "ORDER BY total_sold DESC " +
+        "LIMIT 10",
+        (error, results) => {
+            if (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                res.json(results);
+            }
+        }
+    );
+}
