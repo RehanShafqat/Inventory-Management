@@ -7,7 +7,11 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Poppins']
+        body: ['Roboto']
+      },
+      colors: {
+        darkModeColor: "#1c2434",
+        bgWhite: "#f1f5f9"
       }
     },
   },
