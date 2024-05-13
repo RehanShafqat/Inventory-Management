@@ -393,6 +393,7 @@ export const customerOrder = async (req, res, next) => {
 };
 export const updateCustomerOrder = async (req, res, next) => {
     const { order_id, status } = req.body;
+    console.log(order_id);
 
     try {
         // Validate the status value against enum types defined in the database schema
@@ -400,7 +401,6 @@ export const updateCustomerOrder = async (req, res, next) => {
         if (!validStatusValues.includes(status)) {
             return next(new customError(`Invalid status value: ${status}. Allowed values: ${validStatusValues.join(', ')}`, 400));
         }
-
         // Begin a transaction
         await db.beginTransaction();
 
@@ -454,4 +454,84 @@ export const getSoldData = async (req, res, next) => {
             }
         }
     );
+}
+export const getSupplierDetails = (req, res, next) => {
+    const sqlQuery = `
+        SELECT 
+            s.supplier_id,
+            s.NTN_number,
+            s.email,
+            s.name AS supplier_name,
+            CONCAT('[', GROUP_CONCAT(DISTINCT CONCAT('"', c.name, '"') ORDER BY c.name), ']') AS categories_supplied
+        FROM
+            suppliers s
+        LEFT JOIN
+            supplier_categories sc ON s.supplier_id = sc.supplier_id
+        LEFT JOIN
+            categories c ON sc.category_id = c.category_id
+        GROUP BY
+            s.supplier_id;
+    `;
+
+    db.query(sqlQuery, (err, results) => {
+        if (err) {
+            return next(new customError(err.message, 500)); // Internal server error
+        }
+
+        // If no results found
+        if (results.length === 0) {
+            return res.status(404).json({ success: false, message: 'No suppliers found' });
+        }
+
+        // Map the results to format the categories_supplied field
+        const formattedResults = results.map((supplier) => ({
+            supplier_id: supplier.supplier_id,
+            NTN_number: supplier.NTN_number,
+            email: supplier.email,
+            supplier_name: supplier.supplier_name,
+            categories_supplied: JSON.parse(supplier.categories_supplied),
+        }));
+
+        // Send the formatted results in the response
+        res.status(200).json({ success: true, suppliers: formattedResults });
+    });
+};
+export const getAllCustomerOrders = (req, res, next) => {
+
+    const query = `
+    SELECT 
+      orders.order_id,
+      orders.order_date,
+      orders.status,
+      users.user_id,
+      users.username AS user_name,
+      users.role AS role
+    FROM 
+      orders
+    INNER JOIN 
+      users ON orders.user_id = users.user_id  
+  `;
+    // Execute the query
+    db.query(query, (error, results) => {
+        if (error) {
+            console.error('Error fetching orders with customers:', error);
+            return next(new customError(error.message, 400))
+        }
+        res.status(200).json({
+            success: true,
+            results
+        });
+    });
+};
+export const getAllProducts = (req, res, next) => {
+    const query = "SELECT * FROM products";
+    db.query(query, (err, result) => {
+        if (err) {
+            return next(new customError(err.message, 400))
+        }
+        res.status(200).json({
+            success: true,
+            products: result
+        })
+    })
 }

@@ -20,10 +20,10 @@ export const userLogin = async (req, res, next) => {
                     const user = {
                         id: result[0].user_id,
                         role: result[0].role,
-                        email: result[0].email
+                        email: result[0].email,
+                        username: result[0].username
 
                     };
-
                     generateWebToken(res, user);
                 } else {
                     return next(new customError("Wrong Username or Password", 400));
@@ -37,7 +37,10 @@ export const userLogin = async (req, res, next) => {
     });
 }
 export const userLogout = (req, res, next) => {
-    console.log("i am here");
+    const cookie = req.cookies.access_token;
+    if (!cookie) {
+        return next(new customError("Cookie not found", 404))
+    }
     res.status(200).cookie("access_token", null, { httpOnly: true, expires: new Date(Date.now()) }).json({
         success: true,
         message: "User logged out successfully"

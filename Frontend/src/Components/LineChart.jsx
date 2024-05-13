@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js/auto';
 
 Chart.register(
@@ -11,8 +11,7 @@ Chart.register(
     Tooltip,
     Legend
 );
-
-const BarChart = () => {
+const LineChart = () => {
     const [chartData, setChartData] = useState(null);
 
     useEffect(() => {
@@ -20,9 +19,7 @@ const BarChart = () => {
         const apiData = [
             { "category_name": "Grocery", "total_sold": 33 },
             { "category_name": "Sports", "total_sold": 3 },
-            { "category_name": "Instruments", "total_sold": 4 },
-            { "category_name": "Clothing", "total_sold": 12 },
-            { "category_name": "asad", "total_sold": 50 },
+            { "category_name": "Clothing", "total_sold": 3 }
         ];
 
         // Extracting labels and dataset from API response
@@ -36,17 +33,9 @@ const BarChart = () => {
                 {
                     label: 'Total Sold',
                     data: dataValues,
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.6)', // Light teal
-                        'rgba(255, 99, 132, 0.6)', // Light red
-                        'rgba(54, 162, 235, 0.6)' // Light blue
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)', // Teal
-                        'rgba(255, 99, 132, 1)', // Red
-                        'rgba(54, 162, 235, 1)' // Blue
-                    ],
-                    borderWidth: 1
+                    borderColor: 'rgb(75,192,192)',
+                    fill: false,
+                    tension: 0.1
                 }
             ]
         };
@@ -56,9 +45,9 @@ const BarChart = () => {
 
     return (
         <>
-            {chartData && <Bar data={chartData} />}
-        </ >
+            {chartData && <Line data={chartData} />}
+        </>
     );
 };
 
-export default BarChart;
+export default LineChart;

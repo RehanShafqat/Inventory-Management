@@ -1,20 +1,24 @@
 import React from 'react'
-import Navbar from '../Components/Navbar'
 import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import StoreIcon from '@mui/icons-material/Store'; import { BarChart } from '@mui/icons-material';
+import StoreIcon from '@mui/icons-material/Store';
+import LineChart from "../Components/LineChart"
+import BarChart from '../Components/BarChart';
+import SuppliersTable from '../Components/SuppliersTable';
+import OrdersList from '../Components/OrdersList';
+import ProductCard from '../Components/ProductCard';
 const AdminDashboard = () => {
     return (
         <>
-            <div className='h-[100vh] w-[100%] bg-bgWhite flex  '>
+            <div className='h-fit w-[100%] bg-bgWhite flex  '>
                 <div className='w-[95%] mx-auto flex-col  mt-10 '>
                     {/* First Row */}
 
 
 
                     <div className='flex flex-col   md:flex-row justify-between flex-wrap items-center'>
-                        <div className="h-44  mb-4 w-full md:w-[23%]  bg-white border shadow-xl">
+                        <div className="h-44  mb-4 w-full md:w-[23%]  bg-white border shadow-lg">
 
 
                             <div className='  mx-auto relative h-full '>
@@ -33,7 +37,7 @@ const AdminDashboard = () => {
                             </div>
 
                         </div>
-                        <div className="h-44 mb-4 w-full md:w-[23%] bg-white border shadow-xl">
+                        <div className="h-44 mb-4 w-full md:w-[23%] bg-white border shadow-lg">
 
 
                             <div className='  mx-auto relative h-full '>
@@ -52,7 +56,7 @@ const AdminDashboard = () => {
                             </div>
 
                         </div>
-                        <div className="h-44 mb-4 w-full md:w-[23%] bg-white border shadow-xl">
+                        <div className="h-44 mb-4 w-full md:w-[23%] bg-white border shadow-lg">
 
 
                             <div className='  mx-auto relative h-full '>
@@ -71,7 +75,7 @@ const AdminDashboard = () => {
                             </div>
 
                         </div>
-                        <div className="h-44  mb-4 w-full md:w-[23%] bg-white border shadow-xl">
+                        <div className="h-44  mb-4 w-full md:w-[23%] bg-white border shadow-lg">
 
 
                             <div className='  mx-auto relative h-full '>
@@ -92,13 +96,37 @@ const AdminDashboard = () => {
                         </div>
 
                     </div>
+                    <div className='w-[100%] flex md:flex-row flex-col   justify-between mt-10    '>
+
+                        <div className='w-[48%] rounded-md bg-white   shadow-xl  flex items-center hover:scale-105 transition-all delay-100   ' >
+                            <div className=' w-[90%] mx-auto  '>
+                                <BarChart />
+                            </div>
+
+                        </div>
+                        <div className='w-[48%] rounded-md bg-white   shadow-xl  flex items-center hover:scale-105 transition-all delay-100   ' >
+                            <div className=' w-[90%] mx-auto  '>
+                                <LineChart />
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    {/* //Suppliers Table */}
+                    <div className='mt-16 max-h-[40vh] overflow-y-auto'>
+                        <SuppliersTable />
+                    </div>
+
+                    <div>
+                        <OrdersList />
+                    </div>
 
 
 
 
 
-
-               
 
                 </div>
 

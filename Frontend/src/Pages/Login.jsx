@@ -1,22 +1,21 @@
-
-
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from "../assets/Logo.png";
-import { gsap } from "gsap"
+import { loginUser } from "../Redux/userSlice";
+import { useSelector, useDispatch } from "react-redux";
 
+import "../assets/App.css";
 
-
-import "../assets/App.css"
 const Login = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const textRef = useRef(null);
+    const { error, role, success, loading } = useSelector((state) => state.user);
+    const [loadingToastId, setLoadingToastId] = useState(null);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
-    const [isInvalid, setIsInvalid] = useState("");
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -28,47 +27,33 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const toastID = toast.loading("Signing in....", {
-            style: {
-                minWidth: '240px',
-                minHeight: '40px',
-                fontSize: "18px",
-                fontWeight: "bolder",
-                border: '1px solid #713200',
-            },
-        });
-        try {
-            const response = await fetch("http://localhost:5000/api/version1/user/login", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData),
-                credentials: 'include'
-            });
-
-            const data = await response.json();
-            console.log(data);
-
-            if (data.success === 'true') {
-                toast.success("Login Successful", {
-                    id: toastID,
-                });
-                navigate("/home");
-            } else {
-                toast.error(data.message, {
-                    id: toastID,
-                });
-                setIsInvalid(data.message);
-            }
-        } catch (error) {
-            toast.error(error.message, {
-                id: toastID,
-            });
-            console.error('Error:', error);
-        }
+        setLoadingToastId(toast.loading("Logging in"));
+        setTimeout(() => {
+            dispatch(loginUser(formData));
+        }, 1000)
     };
 
+    // Use useEffect to handle success/error toasts
+    useEffect(() => {
+        if (success) {
+            // Display success toast and dismiss loading toast
+            toast.success("Logged in successfully", {
+                id: loadingToastId,
+            });
+            // Navigate based on role
+            if (role === "admin" || role === "manager") {
+                navigate("/AdminDashboard");
+            } else if (role === "customer") {
+                navigate("/home");
+            }
+        }
+        if (error) {
+            // Display error toast
+            toast.error(error, {
+                id: loadingToastId,
+            });
+        }
+    }, [success, error, role, navigate, loadingToastId]);
 
     return (
         <div className="bg-white dark:bg-gray-900">
@@ -76,7 +61,7 @@ const Login = () => {
                 <div className="hidden bg-cover lg:block lg:w-2/3"
                     style={{ backgroundImage: 'url(https://img.freepik.com/free-photo/large-group-crates-inside-distribution-warehouse-generated-by-ai_188544-28001.jpg?t=st=1715362724~exp=1715366324~hmac=b0fc7343a72430a70e922539c8eff63032863e9b96a2fa62316021a2446ca87c&w=1380)' }} >
                     <div className="flex items-center h-full px-20 bg-gray-900 bg-opacity-40 ">
-                        <div >
+                        <div>
                             <h2 className="text-2xl text-white font-bold sm:text-6xl ">Inventory Management System</h2>
                             <p className="max-w-xl mt-3 text-gray-300  ">
                                 Transform Your Inventory Management. Our intuitive platform empowers you to efficiently organize, track, and optimize your inventory.
@@ -140,4 +125,3 @@ const Login = () => {
 };
 
 export default Login;
-

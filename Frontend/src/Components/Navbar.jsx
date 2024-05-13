@@ -10,11 +10,18 @@ import CategoryIcon from '@mui/icons-material/Category';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import New from "../assets/New.png"
 import { Link } from 'react-router-dom';
-import CloseIcon from '@mui/icons-material/Close'; const Navbar = () => {
-
-    //navbar functions
+import { useSelector, useDispatch } from "react-redux"
+import CloseIcon from '@mui/icons-material/Close';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { resetUserState } from '../Redux/userSlice';
+const Navbar = () => {
     const [isChecked, setIsChecked] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [loadingToastId, setLoadingToastId] = useState(null);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    //navbar functions
     const handleToggle = () => {
         setIsChecked(!isChecked);
     };
@@ -36,7 +43,6 @@ import CloseIcon from '@mui/icons-material/Close'; const Navbar = () => {
         }
     })
     useEffect(() => {
-        // Reset body overflow when sidebar is hidden
         if (!isVisible) {
             document.body.style.overflowY = 'auto';
         }
@@ -51,6 +57,34 @@ import CloseIcon from '@mui/icons-material/Close'; const Navbar = () => {
         placeOrder: '/place-order'
     };
 
+    const handleLogout = async (e) => {
+        const toastID = toast.loading("Logging out...");
+        setShowDropdown(false);
+        try {
+            setTimeout(async () => {
+
+                const response = await fetch('http://localhost:5000/api/version1/user/logout/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                });
+                if (response.ok) {
+                    toast.success("User logged out", {
+                        id: toastID
+                    })
+                    dispatch(resetUserState());
+                    navigate('/login');
+                }
+            }, 1000)
+        } catch (error) {
+            toast.error(error.message, {
+                id: toastID
+            })
+            console.error('Error:', error);
+        }
+    }
     return (
         <>
 
@@ -126,9 +160,9 @@ import CloseIcon from '@mui/icons-material/Close'; const Navbar = () => {
                                         </li>
                                         <li
                                             className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                            onClick={() => {
+                                            onClick={(e) => {
                                                 // Handle logout click
-                                                setShowDropdown(false);
+                                                handleLogout();
                                                 // Perform logout action (e.g., clear session)
                                             }}
                                         >
