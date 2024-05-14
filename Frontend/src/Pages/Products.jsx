@@ -25,10 +25,8 @@ const Products = () => {
                             products.map((product, key) => {
                                 return (
                                     <div>
-                                        <ProductCard name={product.name} price={product.price} key={key} />
+                                        <ProductCard name={product.name} price={product.price} qty={product.quantity} key={key} />
                                     </div>
-                                    // <></>
-
                                 )
                             })
                         )
