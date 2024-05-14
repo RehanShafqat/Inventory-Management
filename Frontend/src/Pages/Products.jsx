@@ -2,9 +2,11 @@ import React, { useEffect } from 'react'
 import ProductCard from '../Components/ProductCard'
 import { fetchProducts } from '../Redux/productSlice'
 import { useSelector, useDispatch } from "react-redux"
+import { useNavigate } from 'react-router-dom'
 const Products = () => {
     const products = useSelector((state) => state.product.products)
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     useEffect(() => {
         if (!products) {
             const check = async () => {
@@ -13,6 +15,9 @@ const Products = () => {
             check();
         }
     }, [])
+    const handleNavigate = () => {
+        navigate("/Cart")
+    }
     return (
         <div>
             <div className=" mx-auto   min-h-screen bg-bgWhite">
@@ -25,12 +30,18 @@ const Products = () => {
                             products.map((product, key) => {
                                 return (
                                     <div>
-                                        <ProductCard name={product.name} price={product.price} qty={product.quantity} key={key} />
+                                        <ProductCard name={product.name} price={product.price} qty={product.quantity} key={key} id={product.product_id} />
                                     </div>
                                 )
                             })
                         )
                     }
+                </div>
+
+                <div className='flex items-center justify-center  text-white '>
+                    <button className='mx-auto bg-darkModeColor hover:bg-black px-8 py-2 mb-6 ' onClick={handleNavigate} >
+                        Go to Cart
+                    </button>
                 </div>
             </div>
         </div>

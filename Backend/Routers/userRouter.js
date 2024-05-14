@@ -19,6 +19,7 @@ userRouter.post("/customer/register/", userRegistration)
 
 //login for all the entities
 userRouter.post("/login/", userLogin);
+userRouter.get("/details", isTokenValid);
 
 
 

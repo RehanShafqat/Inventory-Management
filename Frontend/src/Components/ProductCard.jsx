@@ -1,10 +1,19 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { addItemToCart } from '../Redux/cartSlice'
 
-const ProductCard = ({ name, price, url = "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg", qty = null }) => {
+const ProductCard = ({ name, price, url = "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg", qty = null, id }) => {
+
+    const dispatch = useDispatch();
+
+    const handleAddToCart = (e) => {
+        e.preventDefault();
+        dispatch(addItemToCart({ id, name, price, quantity: 1 }));
+    };
     return (
-        <div className="sm:w-[75%] w-[100% ] bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
-            <Link to={'/AdminDashboard'}>
+        <div className="sm:w-[75%] w-[100% ] min-h-[44vh] bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
+            <Link >
                 <img
                     src={url}
                     alt="Product"
@@ -23,8 +32,8 @@ const ProductCard = ({ name, price, url = "https://static.vecteezy.com/system/re
                         )
                     }
                     <button
-                        // onClick={handleAddToCart}
-                        className="mt-2 bg-darkModeColor text-white py-1 px-4 rounded hover:bg-[black]"
+                        onClick={handleAddToCart}
+                        className="mt-2 bg-darkModeColor text-white w-full py-1 px-4 rounded hover:bg-[black]"
                     >
                         Add to Cart
                     </button>

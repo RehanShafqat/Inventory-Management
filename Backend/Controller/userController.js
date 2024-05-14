@@ -128,21 +128,43 @@ export const resetPassword = async (req, res, next) => {
         return next(new customError(error.message, 400));
     }
 };
+
+
 export const isTokenValid = (req, res, next) => {
-    const { token } = req.body;
+    const token = req.cookies.access_token;
     if (!token) {
         return next(new customError("Token not found", 400));
     }
     try {
         const result = jwt.verify(token, process.env.JWT_KEY)
-        res.status(200).json({
-            success: "true",
-            message: "token is valid"
+        const id = result.id;
+        const query = "Select * from users where user_id = ? ";
+        db.query(query, id, (err, result) => {
+            if (err) {
+                return next(new customError(err.message, 400));
+            }
+            if (result.length === 0) {
+                return next(new customError("User not found", 404))
+            }
+            const { user_id, email, username, image_URL, role } = result[0]
+            res.status(200).json({
+                success: true,
+                message: "User is valid",
+                result: {
+                    user_id, email, username, image_URL, role
+                }
+            })
         })
+
+
+        console.log(id);
+
+
+
     } catch (error) {
         return next(new customError("invalid token", 400));
     }
-} // it is to check during reset password
+}
 
 export const adminDelete = (req, res, next) => {
     const { user_id } = req.body
@@ -173,6 +195,7 @@ export const getAdmins = (req, res, next) => {
         })
     })
 }
+
 
 
 

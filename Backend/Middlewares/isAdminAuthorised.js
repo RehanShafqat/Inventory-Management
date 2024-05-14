@@ -6,6 +6,7 @@ export const isAdminAuthenticated = async (req, res, next) => {
     //authentication
     try {
         const token = req.cookies.access_token;
+        console.log(token);
         if (!token) {
             return next(new customError("You are not authenticated first", 400));
         }

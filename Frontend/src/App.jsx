@@ -8,6 +8,7 @@ import ResetPassword from './Pages/ResetPassword';
 import Layout from './Pages/Layout';
 import AdminDashboard from './Pages/AdminDashboard';
 import Products from './Pages/Products';
+import Cart from './Pages/Cart';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/reset/:token" element={<ResetPassword />} />
           <Route path="/adminDashboard" element={<Layout children={<AdminDashboard />} />} />
           <Route path="/Products" element={<Layout children={<Products />} />} />
+          <Route path="/Cart" element={<Layout children={<Cart />} />} />
 
           {/* <Route path="/test" element={<Test />} /> */}
         </Routes>
