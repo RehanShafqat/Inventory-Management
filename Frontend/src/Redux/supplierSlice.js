@@ -11,8 +11,9 @@ export const fetchSuppliers = createAsyncThunk('supplier/fetchSuppliers', async 
             credentials: 'include'
         });
         const data = await response.json(); // Parse the JSON response
+        console.log(data.suppliers);
         return data.suppliers;
-    } catch (error) {
+    } catch (error) {   
         console.log(error.message);
     }
 });

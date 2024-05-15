@@ -11,6 +11,7 @@ const Products = () => {
         if (!products) {
             const check = async () => {
                 await dispatch(fetchProducts());
+                console.log(products);
             }
             check();
         }
@@ -29,8 +30,9 @@ const Products = () => {
                         products && (
                             products.map((product, key) => {
                                 return (
-                                    <div>
-                                        <ProductCard name={product.name} price={product.price} qty={product.quantity} key={key} id={product.product_id} />
+                                    <div key={key}>
+
+                                        <ProductCard name={product.name} price={product.price} qty={product.quantity} key={key} id={product.product_id} url={product.image_url} />
                                     </div>
                                 )
                             })

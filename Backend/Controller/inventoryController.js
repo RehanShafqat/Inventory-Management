@@ -90,83 +90,78 @@ export const removeSupplier = (req, res, next) => {
 // 2. check if the category specified exists in the category table 
 // 3. check if the supplier specified supplies the particular category 
 // if all three are fullfilled then product can be added otherwise it can't be added
-
 export const addProduct = async (req, res, next) => {
     // Check if required fields are provided
-    const { supplier_NTN, name, price, selling_price, image_url, category_name } = req.body;
-
-    if (!supplier_NTN || !name || !price || !selling_price || !image_url || !category_name) {
-        return next(new customError("Provide all the fields", 400))
+    const { supplier_NTN, name, price, selling_price, category_name, description, image_url } = req.body;
+    if (!supplier_NTN || !name || !price || !selling_price || !category_name || !description) {
+        return next(new customError("Provide all the fields", 400));
     }
     db.beginTransaction();
     // Check if a product with the same name already exists
-    const checkProductQuery = `
-        SELECT *FROM products WHERE name = ?`;
+    const checkProductQuery = `SELECT * FROM products WHERE name = ?`;
     db.query(checkProductQuery, [name], async (error, productResult) => {
         if (error) {
             await db.rollback();
-            return next(new customError(error.message, 400))
+            return next(new customError(error.message, 400));
         }
         if (productResult.length > 0) {
             // Product with the same name already exists
             await db.rollback();
-            return next(new customError("Product already exists", 400))
+            return next(new customError("Product already exists", 400));
         }
+
         // Retrieve the category_id based on the provided category_name
         const getCategoryQuery = `
-          SELECT category_id
-          FROM categories
-          WHERE name = ?
+            SELECT category_id
+            FROM categories
+            WHERE name = ?
         `;
         db.query(getCategoryQuery, [category_name], async (categoryError, categoryResult) => {
             if (categoryError) {
                 await db.rollback();
-                return next(new customError(categoryError.message, 400))
+                return next(new customError(categoryError.message, 400));
             }
             if (categoryResult.length === 0) {
                 // Category does not exist
                 await db.rollback();
-                return next(new customError("Provided category does not exist in the db", 400))
+                return next(new customError("Provided category does not exist in the db", 400));
             }
             const category_id = categoryResult[0].category_id;
 
-
-
-
             // Check if the supplier supplies the specified category
             const checkSupplierCategoryQuery = `
-            SELECT supplier_id
-            FROM suppliers
-            WHERE NTN_number = ?
-            AND EXISTS (
-              SELECT *
-              FROM supplier_categories
-              WHERE supplier_id = suppliers.supplier_id
-              AND category_id = ?
-            )`;
+                SELECT supplier_id
+                FROM suppliers
+                WHERE NTN_number = ?
+                AND EXISTS (
+                    SELECT *
+                    FROM supplier_categories
+                    WHERE supplier_id = suppliers.supplier_id
+                    AND category_id = ?
+                )`;
             db.query(checkSupplierCategoryQuery, [supplier_NTN, category_id], async (supplierError, supplierResult) => {
                 if (supplierError) {
                     await db.rollback();
-                    return next(new customError(supplierError.message, 400))
+                    return next(new customError(supplierError.message, 400));
                 }
 
                 if (supplierResult.length === 0) {
                     // Supplier does not supply the specified category
                     await db.rollback();
-                    return next(new customError("The specified supplier does not provide this category", 400))
+                    return next(new customError("The specified supplier does not provide this category", 400));
                 }
 
                 // Insert the new product into the products table
                 const insertProductQuery = `
-              INSERT INTO products (supplier_NTN, name, price, selling_price, image_url, category_id,quantity)
-              VALUES (?, ?, ?, ?, ?, ?,?)
-            `;
-                const productValues = [supplier_NTN, name, price, selling_price, image_url, category_id, 0]; //0 for quantity
+                    INSERT INTO products (supplier_NTN, name, price, selling_price, image_url, category_id, quantity, description)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                `;
+                const productValues = [supplier_NTN, name, price, selling_price, image_url, category_id, 0, description]; // 0 for quantity
                 db.query(insertProductQuery, productValues, async (insertError, result) => {
                     if (insertError) {
                         console.error('Error adding product:', insertError);
                         await db.rollback();
-                        return next(new customError(insertError.message, 400))
+                        return next(new customError(insertError.message, 400));
                     }
                     const productId = result.insertId;
 
@@ -175,14 +170,12 @@ export const addProduct = async (req, res, next) => {
                         success: true,
                         message: 'Product added successfully',
                     });
-
                 });
             });
         });
     });
-
-
 };
+
 
 export const supplierOrder = async (req, res, next) => {
     const { user_id, products } = req.body;
@@ -534,4 +527,20 @@ export const getAllProducts = (req, res, next) => {
             products: result
         })
     })
+}
+export const getAllCategories = (req, res, next) => {
+
+    db.query("SELECT * FROM categories ", (err, result) => {
+        if (err) {
+            return next(new customError(err.message, 400))
+        }
+        if (result.length === 0) {
+            return next(new customError("No category found", 400))
+        }
+        res.status(200).json({
+            success: true,
+            result
+        })
+    })
+
 }

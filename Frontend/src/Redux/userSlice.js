@@ -43,7 +43,6 @@ export const fetchUserDetails = createAsyncThunk(
             });
 
             const data = await response.json();
-            // console.log(data.result);
 
             if (response.ok) {
 
@@ -98,12 +97,13 @@ const userSlice = createSlice({
             })
             .addCase(loginUser.fulfilled, (state, action) => {
                 state.loading = false;
-                state.userId = action.payload.user_id;
-                state.email = action.payload.email;
-                state.username = action.payload.username;
-                state.imageURL = action.payload.image_URL;
-                state.role = action.payload.role;
-                state.success = action.payload.success;
+                state.userId = action.payload.user.user_id;
+                state.email = action.payload.user.email;
+                state.username = action.payload.user.username;
+                state.imageURL = action.payload.user.image_URL;
+
+                state.role = action.payload.user.role;
+                state.success = true;
                 state.error = null;
             })
             .addCase(loginUser.rejected, (state, action) => {

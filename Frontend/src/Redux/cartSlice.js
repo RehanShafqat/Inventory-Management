@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import toast from 'react-hot-toast';
+
 export const orderItems = () => {
     return async (dispatch, getState) => {
-        const toastId = toast.loading("Placing Order to respective suppliers ... ")
+        const toastId = toast.loading("Placing Order to respective suppliers ... ");
         const { role, cart } = getState().cart;
-        const userId = getState().user.userId; // assuming you have the userId in the user slice
+        const userId = getState().user.userId;
 
         if (role === 'admin') {
             const products = cart.reduce((acc, item) => {
@@ -31,17 +32,16 @@ export const orderItems = () => {
                 if (result.success === true) {
                     toast.success("Order placed successfully", {
                         id: toastId
-                    })
-                }
-                else {
+                    });
+                } else {
                     toast.error(result.message, {
                         id: toastId
-                    })
+                    });
                 }
             } catch (error) {
                 toast.error(error.message, {
                     id: toastId
-                })
+                });
             }
         } else if (role === 'customer') {
             console.log('customer called');
@@ -49,34 +49,25 @@ export const orderItems = () => {
     };
 };
 
-
-
-
-
-
 const cartSlice = createSlice({
     name: 'cart',
     initialState: {
-        cart: null,
+        cart: [],
         role: null,
     },
     reducers: {
         addItemToCart: (state, action) => {
-            console.log("hello my love");
-            const { id, name, price, quantity } = action.payload;
-            const existingItem = state.cart && state.cart.find(item => item.id === id);
+            const { id, name, price, quantity, url } = action.payload;
+            const existingItem = state.cart.find(item => item.id === id);
             if (existingItem) {
                 existingItem.quantity += quantity;
             } else {
-                if (!state.cart) {
-                    state.cart = [];
-                }
-                state.cart.push({ id, name, price, quantity });
+                state.cart.push({ id, name, price, quantity, url });
             }
         },
         updateCartItemQuantity: (state, action) => {
             const { id, quantity } = action.payload;
-            const item = state.cart && state.cart.find(item => item.id === id);
+            const item = state.cart.find(item => item.id === id);
             if (item) {
                 item.quantity = quantity;
             }
@@ -85,11 +76,11 @@ const cartSlice = createSlice({
             state.cart = state.cart.filter(item => item.id !== action.payload.id);
         },
         clearCart: (state) => {
-            state.cart = null;
+            state.cart = [];
         },
         updateUserRole: (state, action) => {
-            state.role = action.payload.role;  // Add an action to update userRole
-        }
+            state.role = action.payload.role;
+        },
     },
 });
 

@@ -9,6 +9,7 @@ import Layout from './Pages/Layout';
 import AdminDashboard from './Pages/AdminDashboard';
 import Products from './Pages/Products';
 import Cart from './Pages/Cart';
+import AddProduct from './Pages/AddProduct';
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/adminDashboard" element={<Layout children={<AdminDashboard />} />} />
           <Route path="/Products" element={<Layout children={<Products />} />} />
           <Route path="/Cart" element={<Layout children={<Cart />} />} />
+          <Route path="/addProduct" element={<Layout children={<AddProduct />} />} />
 
           {/* <Route path="/test" element={<Test />} /> */}
         </Routes>

@@ -32,16 +32,15 @@ const Login = () => {
             dispatch(loginUser(formData));
         }, 1000)
     };
-
-    // Use useEffect to handle success/error toasts
     useEffect(() => {
         if (success) {
             // Display success toast and dismiss loading toast
             toast.success("Logged in successfully", {
                 id: loadingToastId,
             });
-            // Navigate based on role
+            console.log(role);
             if (role === "admin" || role === "manager") {
+                console.log("i am up");
                 navigate("/AdminDashboard");
             } else if (role === "customer") {
                 navigate("/home");
