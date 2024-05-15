@@ -10,6 +10,9 @@ import AdminDashboard from './Pages/AdminDashboard';
 import Products from './Pages/Products';
 import Cart from './Pages/Cart';
 import AddProduct from './Pages/AddProduct';
+import AddSupplier from './Pages/AddSupplier';
+import Orders from './Pages/Orders';
+import ProfileUpdate from './Pages/ProfileUpdate';
 
 const App = () => {
   return (
@@ -25,6 +28,9 @@ const App = () => {
           <Route path="/Products" element={<Layout children={<Products />} />} />
           <Route path="/Cart" element={<Layout children={<Cart />} />} />
           <Route path="/addProduct" element={<Layout children={<AddProduct />} />} />
+          <Route path="/addSupplier" element={<Layout children={<AddSupplier />} />} />
+          <Route path="/orders" element={<Layout children={<Orders />} />} />
+          <Route path="/update/profile" element={<Layout children={<ProfileUpdate />} />} />
 
           {/* <Route path="/test" element={<Test />} /> */}
         </Routes>

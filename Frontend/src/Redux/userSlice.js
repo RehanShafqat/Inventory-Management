@@ -55,6 +55,62 @@ export const fetchUserDetails = createAsyncThunk(
         }
     }
 );
+export const changeProfile = createAsyncThunk(
+    'user/changeProfile',
+    async (image_URL, thunkAPI) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/version1/user/change/profileImage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    image_URL: image_URL,
+                    user_id: thunkAPI.getState().user.userId
+                }),
+                credentials: 'include'
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                return data.message;
+            } else {
+                return thunkAPI.rejectWithValue(data);
+            }
+        } catch (error) {
+            throw new Error('Image upload failed');
+        }
+    }
+);
+export const fetchUserCount = createAsyncThunk(
+    'user/fetchUserCount',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/version1/user/getAllUsers/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                return data.users;
+            } else {
+                return rejectWithValue(data); // Fetch failed
+            }
+        } catch (error) {
+            throw new Error('Fetching user count failed'); // Network error or other exception
+        }
+    }
+);
+
+
+
+
+
+
 
 const userSlice = createSlice({
     name: 'user',
@@ -66,7 +122,8 @@ const userSlice = createSlice({
         role: '',
         loading: false,
         error: null,
-        success: null
+        success: null,
+        userCount: null
     },
     reducers: {
         // Reducer to reset user state
@@ -127,7 +184,10 @@ const userSlice = createSlice({
             .addCase(fetchUserDetails.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload ? action.payload.message : 'Fetching user details failed';
-            });
+            })
+            .addCase(fetchUserCount.fulfilled, (state, action) => {
+                state.userCount = action.payload;
+            })
     },
 });
 

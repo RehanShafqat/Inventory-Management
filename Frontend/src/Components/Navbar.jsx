@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from "react-redux"
 import CloseIcon from '@mui/icons-material/Close';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { resetUserState } from '../Redux/userSlice';
+import { fetchUserDetails, resetUserState } from '../Redux/userSlice';
 const Navbar = () => {
     const [isChecked, setIsChecked] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -85,6 +85,10 @@ const Navbar = () => {
             console.error('Error:', error);
         }
     }
+    const image_url = useSelector(state => state.user.imageURL);
+    if (!image_url) {
+        dispatch(fetchUserDetails())
+    }
     return (
         <>
 
@@ -135,9 +139,9 @@ const Navbar = () => {
                             </label>
                         </div>
                         <div className="relative ml-4">
-                            <div className="cursor-pointer w-12 h-12 mr-2 bg-cover bg-center " onClick={handleAvatarClick} style={
+                            <div className="cursor-pointer w-12 h-12 mr-2 bg-cover bg-center rounded-full " onClick={handleAvatarClick} style={
                                 {
-                                    backgroundImage: `url("https://react-demo.tailadmin.com/assets/user-01-b007ff3f.png")`
+                                    backgroundImage: `url(${image_url})`
                                 }
 
                             }  >

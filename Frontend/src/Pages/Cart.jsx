@@ -80,7 +80,7 @@ const Cart = () => {
                                 <tr key={item.id} className="border-b">
                                     <td className="px-4 py-2">
                                         <div className="flex items-center">
-                                            <img src={item.url} alt={item.name} className="w-16 h-16 object-cover rounded-md mr-2" />
+                                            <img src={item.url} alt={item.name} className="w-16 h-16 object-contain rounded-full mr-2" />
                                             <span>{item.name}</span>
                                         </div>
                                     </td>

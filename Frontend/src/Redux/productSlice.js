@@ -13,7 +13,6 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
             throw new Error('Failed to fetch products');
         }
         const data = await response.json();
-        console.log(data);
         return data.products;
     } catch (error) {
         throw error;
@@ -36,7 +35,6 @@ const productSlice = createSlice({
             })
             .addCase(fetchProducts.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                console.log(action.payload);
                 state.products = action.payload;
             })
             .addCase(fetchProducts.rejected, (state, action) => {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
@@ -8,7 +8,31 @@ import BarChart from '../Components/BarChart';
 import SuppliersTable from '../Components/SuppliersTable';
 import OrdersList from '../Components/OrdersList';
 import ProductCard from '../Components/ProductCard';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserCount } from '../Redux/userSlice';
+import { fetchProducts } from '../Redux/productSlice';
+import { fetchOrders, fetchTotalSales } from '../Redux/orderSlice';
 const AdminDashboard = () => {
+    const { userCount } = useSelector((state) => state.user)
+    const { products } = useSelector((state) => state.product)
+    const totalSales = useSelector((state) => state.order.totalSales)
+    const totalOrders = useSelector((state) => state.order.orders)
+    const dispatch = useDispatch();
+    useEffect(() => {
+        if (!userCount) {
+            dispatch(fetchUserCount());
+        }
+        if (!products) {
+            dispatch(fetchProducts());
+        }
+        if (!totalSales) {
+            dispatch((fetchTotalSales()))
+        }
+        if (!totalOrders) {
+            dispatch((fetchOrders()))
+        }
+    }, [])
+
     return (
         <>
             <div className='h-fit w-[100%] bg-bgWhite flex  '>
@@ -28,7 +52,7 @@ const AdminDashboard = () => {
                                 </div>
                                 <div className='absolute top-[52%] left-[5%]'>
                                     <h1 className=' text-2xl font-normal '>
-                                        4325
+                                        {products && products.length}
                                     </h1>
                                     <span className='text-xs text-slate-500'>
                                         Total Products
@@ -47,7 +71,9 @@ const AdminDashboard = () => {
                                 </div>
                                 <div className='absolute top-[52%] left-[5%]'>
                                     <h1 className=' text-2xl font-normal '>
-                                        $4325
+                                        {
+                                            totalSales
+                                        }
                                     </h1>
                                     <span className='text-xs text-slate-500'>
                                         Total Sales
@@ -66,7 +92,7 @@ const AdminDashboard = () => {
                                 </div>
                                 <div className='absolute top-[52%] left-[5%]'>
                                     <h1 className=' text-2xl font-normal '>
-                                        4325
+                                        {userCount}
                                     </h1>
                                     <span className='text-xs text-slate-500'>
                                         Total Users
@@ -85,7 +111,9 @@ const AdminDashboard = () => {
                                 </div>
                                 <div className='absolute top-[52%] left-[5%]'>
                                     <h1 className=' text-2xl font-normal '>
-                                        4325
+                                        {
+                                            totalOrders && totalOrders.length
+                                        }
                                     </h1>
                                     <span className='text-xs text-slate-500'>
                                         Total Orders

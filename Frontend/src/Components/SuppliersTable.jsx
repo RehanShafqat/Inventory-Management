@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { fetchSuppliers } from '../Redux/supplierSlice';
 const SuppliersTable = () => {
     const suppliers = useSelector((state) => state.supplier.suppliers);
-    const error = useSelector((state) => state.error);
+    const error = useSelector((state) => state.supplier.error);
     const dispatch = useDispatch();
-    if (!suppliers && !error) {
-        dispatch(fetchSuppliers());
-    }
+
+    useEffect(() => {
+        if (!suppliers && !error) {
+            dispatch(fetchSuppliers());
+        }
+    }, [suppliers, error, dispatch]); // Specify dependencies
 
     return (
         <>

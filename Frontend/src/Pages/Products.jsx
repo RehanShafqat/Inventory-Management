@@ -41,7 +41,7 @@ const Products = () => {
                 </div>
 
                 <div className='flex items-center justify-center  text-white '>
-                    <button className='mx-auto bg-darkModeColor hover:bg-black px-8 py-2 mb-6 ' onClick={handleNavigate} >
+                    <button className='mx-auto bg-darkModeColor hover:bg-black px-12 py-2 my-8 ' onClick={handleNavigate} >
                         Go to Cart
                     </button>
                 </div>

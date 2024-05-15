@@ -4,6 +4,9 @@ import customError from "../Middlewares/Error.js";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import sendEmail from "../utils/Email.js";
+
+
+
 export const userLogin = async (req, res, next) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -43,7 +46,7 @@ export const userLogout = (req, res, next) => {
     }
     res.status(200).cookie("access_token", null, { httpOnly: true, expires: new Date(Date.now()) }).json({
         success: true,
-        message: "User logged out successfully"
+        message: "User `log`ged out successfully"
     })
 }
 export const forgotPassword = (req, res, next) => {
@@ -56,7 +59,6 @@ export const forgotPassword = (req, res, next) => {
             return next(new customError(err.message, err.code || 400));
         }
         else if (result.length === 0) {
-            console.log(result);
             return next(new customError("User not found", 400));
         }
         const user_id = result[0].user_id;
@@ -157,7 +159,6 @@ export const isTokenValid = (req, res, next) => {
         })
 
 
-        console.log(id);
 
 
 
@@ -195,7 +196,36 @@ export const getAdmins = (req, res, next) => {
         })
     })
 }
+export const changeProfile = (req, res, next) => {
+    const { user_id, image_URL } = req.body;
+    console.log("hello");
+    if (!user_id || !image_URL) {
+        return next(new customError("Enter all fields", 400));
+    }
+    const query = "UPDATE users SET image_URL = ? WHERE user_id = ? ";
+    db.query(query, [image_URL, user_id], (err, result) => {
+        if (err) {
+            return next(new customError(err.message, 400));
+        }
+        console.log(result);
+        res.status(200).json({
+            success: true,
+            message: "Profile picture updated !"
+        })
+    })
+}
 
 
-
-
+export const getAllUsers = (req, res, next) => {
+    const query = "select user_id from users ";
+    db.query(query, (error, result) => {
+        if (error) {
+            return next(new customError(error.message, 400));
+        }
+        const noOfUsers = result.length;
+        res.status(200).json({
+            success: true,
+            users: noOfUsers
+        })
+    })
+}

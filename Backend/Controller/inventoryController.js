@@ -544,3 +544,23 @@ export const getAllCategories = (req, res, next) => {
     })
 
 }
+export const getTotalSales = (req, res, next) => {
+    const query = `SELECT SUM(opd.quantity * p.selling_price) AS total_sales
+FROM orders o
+JOIN users u ON o.user_id = u.user_id
+JOIN order_product_details opd ON o.order_id = opd.order_id
+JOIN products p ON opd.product_id = p.product_id
+WHERE u.role = 'customer' AND o.status = 'delivered';
+`
+    db.query(query, (err, result) => {
+        if (err) {
+            return next(new customError(err.message, 400))
+        }
+        res.status(200).json({
+            success: true,
+            result
+        })
+    })
+
+}
+

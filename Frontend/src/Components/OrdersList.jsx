@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { fetchOrders } from '../Redux/orderSlice';
 import { updateCustomerOrder } from '../Redux/orderSlice';
@@ -8,9 +8,11 @@ const OrdersList = () => {
     const orders = useSelector((state) => state.order.orders);
     const { role } = useSelector((state) => state.user);
     const dispatch = useDispatch();
-    if (!orders) {
-        dispatch(fetchOrders());
-    }
+    useEffect(() => {
+        if (!orders) {
+            dispatch(fetchOrders());
+        }
+    }, [orders, dispatch])
     const handleStatusChange = async (orderId) => {
         const confirmed = window.confirm("Are you sure you want to continue?");
         if (confirmed) {
@@ -24,11 +26,13 @@ const OrdersList = () => {
             }
         }
     };
+
+
     return (
-        <div className='overflow-x-auto mt-10' >
-            <h1 className="text-2xl font-bold mb-4">Orders List</h1>
+        <div className='overflow-x-auto  mt-10' style={{ scrollbarWidth: "none" }} >
+            <h1 className="text-2xl font-bold mb-4">Customer Orders List</h1>
             <table className="min-w-full  divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-100">
                     <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer Name</th>

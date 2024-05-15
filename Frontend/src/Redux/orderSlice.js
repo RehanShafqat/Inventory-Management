@@ -14,7 +14,6 @@ export const fetchOrders = createAsyncThunk('orders/fetchOrders', async () => {
             credentials: 'include'
         });
         const data = await response.json();
-        console.log(data);
         return data.results;
     } catch (error) {
         throw new Error('Failed to fetch orders');
@@ -37,19 +36,33 @@ export const updateCustomerOrder = createAsyncThunk(
                 }),
             });
             const data = await response.json();
-            console.log(data);
             return data; // Return any relevant data from the API response
         } catch (error) {
             throw new Error('Failed to update order');
         }
     }
 );
+export const fetchTotalSales = createAsyncThunk('orders/fetchTotalSales', async () => {
+    try {
+        // Make the API request
+        const response = await fetch('http://localhost:5000/api/version1/inventory/getTotalSales', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        const data = await response.json();
+        return data.result[0].total_sales; // Extract total sales from the API response
+    } catch (error) {
+        throw new Error('Failed to fetch total sales');
+    }
+});
+
 
 const orderSlice = createSlice({
     name: 'orders',
     initialState: {
         orders: null,
         loading: false,
+        totalSales: null,
         error: null,
     },
     reducers: {},
@@ -67,7 +80,13 @@ const orderSlice = createSlice({
             .addCase(fetchOrders.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
-            });
+            })
+            .addCase(fetchTotalSales.fulfilled, (state, action) => {
+                state.loading = false;
+                state.totalSales = action.payload;
+                state.error = null;
+            })
+
     },
 });
 
