@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import AdminSideBar from '../Components/AdminSideBar'
 import Navbar from '../Components/Navbar'
-const Layout = ({ children }) => {
+const Layout = ({ routes, children }) => {
 
     const [width, setInnerWidth] = useState(window.innerWidth);
     window.addEventListener('resize', () => {
@@ -10,11 +10,12 @@ const Layout = ({ children }) => {
             window.removeEventListener('resize', handleResize);
         }
     })
+    console.log(routes);
     return (
         <div className='flex'>
 
             <div>
-                <Navbar />
+                <Navbar routes={routes} />
             </div>
 
             <div className={`relative h-fit  top-[5rem] w-[100vw]    `} >

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast';
+import bg from "../assets/bg.jpg"
+
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
 
@@ -50,7 +52,7 @@ const ForgotPassword = () => {
     };
     return (
         <>
-            <div className="h-[100vh] flex justify-center items-center bg-gray-100 bg-no-repeat bg-cover bg-center " style={{ backgroundImage: `url(https://img.freepik.com/free-photo/large-group-crates-inside-distribution-warehouse-generated-by-ai_188544-28001.jpg?t=st=1715362724~exp=1715366324~hmac=b0fc7343a72430a70e922539c8eff63032863e9b96a2fa62316021a2446ca87c&w=1380)` }}  >
+            <div className="h-[100vh] flex justify-center items-center bg-gray-100 bg-no-repeat bg-cover bg-center " style={{ backgroundImage: `url(${bg})` }}  >
 
                 <div className=' w-full h-full backdrop-blur-sm  top-0 left-0 right-0 absolute  '>
                     <div className="bg-white p-8 rounded  shadow-md w-[100%] sm:w-[35%] absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 ">

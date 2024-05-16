@@ -5,9 +5,11 @@ import { fetchUserDetails } from '../Redux/userSlice';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { fetchOrders } from '../Redux/orderSlice';
 const Cart = () => {
     const cart = useSelector(state => state.cart.cart);
     const userId = useSelector(state => state.user.userId);
+    const role = useSelector(state => state.user.role);
     const userRole = useSelector(state => state.user.role);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -36,10 +38,16 @@ const Cart = () => {
     const handlePlaceOrder = () => {
         const result = dispatch(orderItems());
         result.then((response) => {
-            navigate("/AdminDashboard");
+            if (userRole == "admin" || userRole == "manager") {
+                navigate("/AdminDashboard");
+            }
+            else if (userRole == "customer") {
+                navigate("/home")
+            }
         }).catch((error) => {
             toast.error(error.message);
         });
+        dispatch(fetchOrders());
     };
 
     const calculateSubtotal = (price, quantity) => {

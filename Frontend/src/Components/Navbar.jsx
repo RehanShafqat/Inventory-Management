@@ -6,8 +6,7 @@ import Person2Icon from '@mui/icons-material/Person2';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import CategoryIcon from '@mui/icons-material/Category';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'; import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import New from "../assets/New.png"
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux"
@@ -15,7 +14,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { fetchUserDetails, resetUserState } from '../Redux/userSlice';
-const Navbar = () => {
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+const Navbar = ({ routes }) => {
     const [isChecked, setIsChecked] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const [loadingToastId, setLoadingToastId] = useState(null);
@@ -33,6 +33,8 @@ const Navbar = () => {
     //sidebar functions
     const [isVisible, setIsVisible] = useState(null);
     const [width, setInnerWidth] = useState(window.innerWidth);
+    const image_url = useSelector(state => state.user.imageURL);
+
     const handleClick = () => {
         setIsVisible(!isVisible)
     }
@@ -46,17 +48,13 @@ const Navbar = () => {
         if (!isVisible) {
             document.body.style.overflowY = 'auto';
         }
-    }, [isVisible]);
-    const routes = {
-        dashboard: '/Admindashboard',
-        profile: '/profile',
-        products: '/products',
-        orders: '/orders',
-        addSupplier: '/addSupplier',
-        addCategory: '/addCategory',
-        placeOrder: '/products',
-        cart: "/cart"
-    };
+        if (!image_url) {
+            dispatch(fetchUserDetails())
+        }
+    }, [isVisible, dispatch]);
+
+
+
 
     const handleLogout = async (e) => {
         const toastID = toast.loading("Logging out...");
@@ -86,10 +84,7 @@ const Navbar = () => {
             console.error('Error:', error);
         }
     }
-    const image_url = useSelector(state => state.user.imageURL);
-    if (!image_url) {
-        dispatch(fetchUserDetails())
-    }
+
     return (
         <>
 
@@ -142,13 +137,10 @@ const Navbar = () => {
                         <div className="relative ml-4">
                             <div className="cursor-pointer w-12 h-12 mr-2 bg-cover bg-center rounded-full " onClick={handleAvatarClick} style={
                                 {
-                                    backgroundImage: `url(${image_url})`
+                                    backgroundImage: image_url ? `url(${image_url})` : `url(${"https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"})`
                                 }
 
                             }  >
-
-
-
                             </div>
                             {showDropdown && (
                                 <div className="absolute right-0 mt-2 z-20 w-48 bg-white rounded-md shadow-md">
@@ -179,20 +171,22 @@ const Navbar = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
 
 
 
 
             {/* SideBar */}
 
-            <div className={` ${width < 1100 ? "absolute" : "fixed"} left-0 z-50 h-screen  overflow-y-auto min-w-[200px]    sm:w-[300px] text-slate-400 shadow-2xl bg-darkModeColor transition-all delay-100 ease-in-out ${width > 1100 ? "-translate-x-0" : `${isVisible ? "-translate-x-0" : "-translate-x-full"}`}`} >
-                {width < 1100 && (
-                    <button className='absolute z-50  sm:top-[2%] left-[88%]' onClick={() => { setIsVisible(false) }}>
-                        <CloseIcon className='w-[100%]' />
-                    </button>
+            <div className={` ${width < 1100 ? "absolute" : "fixed"} left-0 z-50 h-screen  overflow-y-auto min-w-[200px]    sm:w-[300px] text-slate-400 shadow-2xl bg-darkModeColor transition-all delay-100 ease-in-out ${width > 1100 ? "-translate-x-0" : `${isVisible ? "-translate-x-0" : "-translate-x-full"}`}`
+            } >
+                {
+                    width < 1100 && (
+                        <button className='absolute z-50  sm:top-[2%] left-[88%]' onClick={() => { setIsVisible(false) }}>
+                            <CloseIcon className='w-[100%]' />
+                        </button>
 
-                )
+                    )
                 }
 
 
@@ -206,45 +200,34 @@ const Navbar = () => {
                 <div className='ml-4 mt-8 h-[85%] flex flex-col justify-between '>
 
 
-                    <div className='h-[45%]  mt-10'>
+                    <div className='h-[50%]  mt-10'>
                         <p className='ml-3 text-sm font-semibold  uppercase'>
                             Menu
                         </p>
 
-                        <ul className='flex flex-col h-full ml-4 '>
-                            <Link to={routes.dashboard} className='flex items-center transition-all ease-in-out delay-80   font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110 '> <DashboardIcon className='ml-3 ' />  <li className='ml-2 '>Dashboard</li></Link>
+                        <ul className='flex flex-col h-full ml-4 mt-2 '>
 
-                            <Link to={routes.profile} className='flex    items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><Person2Icon className='ml-3' /><li className='ml-2'>Profile</li></Link>
-                            <Link to={routes.products} className='flex items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><InventoryIcon className='ml-3' /><li className='ml-2'>Products</li></Link>
-                            <Link to={routes.orders} className='flex   items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><ShoppingCartCheckoutIcon className='ml-3' /><li className='ml-2'>Orders</li></Link>
-                            <Link to={routes.addSupplier} className='flex   items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><PersonAddIcon className='ml-3' /><li className='ml-2'>Add Supplier</li></Link>
-                            <Link to={routes.placeOrder} className='flex   items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><AddShoppingCartIcon className='ml-3' /><li className='ml-2'>Place Order</li></Link>
-                            <Link to={routes.cart} className='flex   items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'> <DashboardIcon className='ml-2' />  <li className='ml-2'>Cart</li></Link>
+                            {routes &&
+                                routes.map((object, key) => {
+                                    return (
+
+                                        <Link key={key} to={object.route} className='flex items-center transition-all ease-in-out delay-80 font-medium text-[15px] text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110 '>
+                                            {<object.icon className='mr-3' />}
+                                            <li className=' '>{object.name}</li>
+                                        </Link>
+                                    )
+                                })}
+
+
+
+
+
+
+
 
                         </ul>
                     </div>
-                    {/* <div className='h-[20%] mt-6  '>
-                        <p className='ml-3 text-sm font-semibold  uppercase'>
-                            Support
-                        </p>
 
-                        <ul className='flex flex-col mt-2  h-full ml-4 '>
-
-                        </ul>
-                    </div> */}
-                    {/* <div className='h-[20%]  '>
-                        <p className='ml-3 text-sm font-semibold  uppercase'>
-                            Others
-                        </p>
-
-                        <ul className='flex flex-col mt-2  ml-4 '>
-                            <Link to={routes.dashboard} className='flex items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-1 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'> <DashboardIcon className='ml-2' />  <li className='ml-2'>Dashboard</li></Link>
-
-                            <Link to={routes.profile} className='flex items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-1 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><Person2Icon className='ml-2' /><li className='ml-2'>Profile</li></Link>
-                            <Link to={routes.products} className='flex items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-1 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><InventoryIcon className='ml-2' /><li className='ml-2'>Products</li></Link>
-
-                        </ul>
-                    </div> */}
                 </div>
             </div >
 

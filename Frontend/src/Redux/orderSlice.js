@@ -2,7 +2,6 @@
 
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import toast from 'react-hot-toast';
 
 
 // Create an asynchronous thunk to fetch orders from the API

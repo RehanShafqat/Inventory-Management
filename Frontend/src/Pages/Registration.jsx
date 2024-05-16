@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import 'react-toastify/dist/ReactToastify.css';
 import Logo from "../assets/Logo.png";
 import { useNavigate } from 'react-router-dom';
+import bg from "../assets/bg.jpg"
 
 
 const Registration = () => {
@@ -78,12 +79,14 @@ const Registration = () => {
         });
 
         try {
-            const imageUrl = await uploadImageToCloudinary();
+            let imageUrl = await uploadImageToCloudinary();
+            if (!imageFile) {
+                imageUrl = "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
+            }
             const formDataWithImage = {
                 ...formData,
                 image_URL: imageUrl
             };
-
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -126,7 +129,7 @@ const Registration = () => {
 
 
     return (
-        <div className="h-[100vh] flex justify-center items-center bg-gray-100 bg-no-repeat bg-cover bg-center " style={{ backgroundImage: `url("https://img.freepik.com/free-photo/large-group-crates-inside-distribution-warehouse-generated-by-ai_188544-28001.jpg?t=st=1715362724~exp=1715366324~hmac=b0fc7343a72430a70e922539c8eff63032863e9b96a2fa62316021a2446ca87c&w=1380")` }}  >
+        <div className="h-[100vh] flex justify-center items-center bg-gray-100 bg-no-repeat bg-cover bg-center " style={{ backgroundImage: `url(${bg})` }}  >
 
             <div className='absolute w-full h-full top-0 left-0 right-0 backdrop-blur-sm'>
                 <div className="max-w-md w-full h-full  sm:h-fit p-6 bg-white sm:rounded-lg shadow-lg absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">

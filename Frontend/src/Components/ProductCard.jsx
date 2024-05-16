@@ -1,11 +1,18 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { addItemToCart } from '../Redux/cartSlice';
 import toast from 'react-hot-toast';
+import { fetchUserDetails } from '../Redux/userSlice';
 
 const ProductCard = ({ id, name, price, url = "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg", qty = null, supplier_NTN = null }) => {
     const dispatch = useDispatch();
+    const role = useSelector(state => state.user.role);
+    useEffect(() => {
+        if (!role) {
+            dispatch(fetchUserDetails());
+        }
+    }, [dispatch])
 
     const handleAddToCart = (e) => {
         toast.success("Added to cart");
@@ -27,7 +34,7 @@ const ProductCard = ({ id, name, price, url = "https://static.vecteezy.com/syste
                     <div className="flex items-center">
                         <p className="text-lg text-black cursor-auto">Price : ${price}</p>
                     </div>
-                    {qty != null && supplier_NTN != null && (
+                    {qty != null && supplier_NTN != null && role === "admin" && (
                         <div className='flex flex-col'>
                             <span>
                                 Quantity : {qty}

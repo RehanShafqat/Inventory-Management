@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Logo from "../assets/Logo.png";
 import { loginUser } from "../Redux/userSlice";
 import { useSelector, useDispatch } from "react-redux";
-
+import bg from "../assets/bg.jpg"
 import "../assets/App.css";
 
 const Login = () => {
@@ -58,7 +58,8 @@ const Login = () => {
         <div className="bg-white dark:bg-gray-900">
             <div className="flex justify-center h-screen">
                 <div className="hidden bg-cover lg:block lg:w-2/3"
-                    style={{ backgroundImage: 'url(https://img.freepik.com/free-photo/large-group-crates-inside-distribution-warehouse-generated-by-ai_188544-28001.jpg?t=st=1715362724~exp=1715366324~hmac=b0fc7343a72430a70e922539c8eff63032863e9b96a2fa62316021a2446ca87c&w=1380)' }} >
+                    style={{ backgroundImage: `url(${bg})` }} >
+                    {/* <img src={bg} alt="" /> */}
                     <div className="flex items-center h-full px-20 bg-gray-900 bg-opacity-40 ">
                         <div>
                             <h2 className="text-2xl text-white font-bold sm:text-6xl ">Inventory Management System</h2>

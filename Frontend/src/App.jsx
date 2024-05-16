@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Registration from './Pages/Registration';
 import Login from './Pages/Login';
@@ -13,24 +13,87 @@ import AddProduct from './Pages/AddProduct';
 import AddSupplier from './Pages/AddSupplier';
 import Orders from './Pages/Orders';
 import ProfileUpdate from './Pages/ProfileUpdate';
+import { useDispatch, useSelector } from 'react-redux';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import Person2Icon from '@mui/icons-material/Person2';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import { fetchUserDetails } from './Redux/userSlice';
 
 const App = () => {
+  const dispatch = useDispatch();
+  const role = useSelector(state => state.user.role)
+
+  useEffect(() => {
+    dispatch(fetchUserDetails());
+  }, [dispatch])
+
+
+  let accessibleRoutes = null;
+  if (role === 'admin') {
+    accessibleRoutes = [{ name: 'Dashboard', route: '/Admindashboard', icon: DashboardIcon },
+    { name: 'Profile', route: '/profile', icon: Person2Icon },
+    { name: 'Products', route: '/products', icon: InventoryIcon },
+    { name: 'Orders', route: '/orders', icon: ShoppingCartCheckoutIcon },
+    { name: 'Add Supplier', route: '/addSupplier', icon: PersonAddIcon },
+    { name: 'Place Order', route: '/products', icon: AddShoppingCartIcon },
+    { name: 'Cart', route: '/cart', icon: ShoppingCartIcon },
+    { name: 'Add Product', route: '/addProduct', icon: AddShoppingCartIcon }]
+
+
+
+  }
+
+
+  if (role === 'manager') {
+    accessibleRoutes = [{ name: 'Dashboard', route: '/Admindashboard', icon: DashboardIcon },
+    { name: 'Profile', route: '/profile', icon: Person2Icon },
+    { name: 'Products', route: '/products', icon: InventoryIcon },
+    { name: 'Orders', route: '/orders', icon: ShoppingCartCheckoutIcon },
+    { name: 'Add Supplier', route: '/addSupplier', icon: PersonAddIcon },
+    { name: 'Place Order', route: '/products', icon: AddShoppingCartIcon },
+    { name: 'Cart', route: '/cart', icon: ShoppingCartIcon },
+    { name: 'Add Product', route: '/addProduct', icon: AddShoppingCartIcon },
+    { name: 'Add admin', route: '/addProduct', icon: AddShoppingCartIcon },
+    ]
+  }
+
+  if (role === 'customer') {
+    console.log("hello");
+    accessibleRoutes = [
+      { name: 'Profile', route: '/profile', icon: Person2Icon },
+      { name: 'Products', route: '/products', icon: InventoryIcon },
+      { name: 'Place Order', route: '/products', icon: AddShoppingCartIcon },
+      { name: 'Cart', route: '/cart', icon: ShoppingCartIcon },
+    ]
+  }
+
+
+
+
+
+
+
   return (
     <div className="font-body">
       <BrowserRouter>
         <Routes>
           <Route path="/register" element={<Registration />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<Home />} />
+          <Route path="/home" element={<Layout routes={accessibleRoutes} children={<Home />} />} />
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/reset/:token" element={<ResetPassword />} />
-          <Route path="/adminDashboard" element={<Layout children={<AdminDashboard />} />} />
-          <Route path="/Products" element={<Layout children={<Products />} />} />
-          <Route path="/Cart" element={<Layout children={<Cart />} />} />
-          <Route path="/addProduct" element={<Layout children={<AddProduct />} />} />
-          <Route path="/addSupplier" element={<Layout children={<AddSupplier />} />} />
-          <Route path="/orders" element={<Layout children={<Orders />} />} />
-          <Route path="/profile" element={<Layout children={<ProfileUpdate />} />} />
+          <Route path="/adminDashboard" element={<Layout routes={accessibleRoutes} children={<AdminDashboard />} />} />
+          <Route path="/Products" element={<Layout routes={accessibleRoutes} children={<Products />} />} />
+          <Route path="/Cart" element={<Layout routes={accessibleRoutes} children={<Cart />} />} />
+          <Route path="/addProduct" element={<Layout routes={accessibleRoutes} children={<AddProduct />} />} />
+          <Route path="/addSupplier" element={<Layout routes={accessibleRoutes} children={<AddSupplier />} />} />
+          <Route path="/orders" element={<Layout routes={accessibleRoutes} children={<Orders />} />} />
+          <Route path="/profile" element={<Layout routes={accessibleRoutes} children={<ProfileUpdate />} />} />
 
           {/* <Route path="/test" element={<Test />} /> */}
         </Routes>
