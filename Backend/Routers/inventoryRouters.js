@@ -15,5 +15,4 @@ inventoryRouter.get("/getAllCustomerOrders", isAdminAuthenticated, getAllCustome
 inventoryRouter.get("/getAllProducts", getAllProducts)
 inventoryRouter.get("/getAllCategories/", getAllCategories)
 inventoryRouter.get("/getTotalSales/", getTotalSales)
-
 export default inventoryRouter;

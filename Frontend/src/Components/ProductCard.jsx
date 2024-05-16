@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { addItemToCart } from '../Redux/cartSlice';
 import toast from 'react-hot-toast';
 
-const ProductCard = ({ id, name, price, url = "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg", qty = null }) => {
+const ProductCard = ({ id, name, price, url = "https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg", qty = null, supplier_NTN = null }) => {
     const dispatch = useDispatch();
 
     const handleAddToCart = (e) => {
@@ -18,20 +18,26 @@ const ProductCard = ({ id, name, price, url = "https://static.vecteezy.com/syste
         <div className="sm:w-[75%] w-[100%] min-h-[44vh] bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
             <Link to="#">
                 <img
-                    src={"https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"}
+                    src={url}
                     alt="Product"
-                    className=" object-cover w-[100%] rounded-t-xl"
+                    className=" object-fill w-[100%] h-[32vh] rounded-t-xl"
                 />
                 <div className="px-4 py-3 w-72">
                     <p className="text-xl font-bold text-black truncate block capitalize">{name}</p>
                     <div className="flex items-center">
                         <p className="text-lg text-black cursor-auto">Price : ${price}</p>
                     </div>
-                    {qty != null && (
-                        <div>
-                            Quantity : {qty}
+                    {qty != null && supplier_NTN != null && (
+                        <div className='flex flex-col'>
+                            <span>
+                                Quantity : {qty}
+                            </span>
+                            <span>
+                                Supplier : {supplier_NTN}
+                            </span>
                         </div>
                     )}
+
                     <button
                         onClick={handleAddToCart}
                         className="mt-2 bg-darkModeColor text-white w-full py-1 px-4 rounded hover:bg-[black]"

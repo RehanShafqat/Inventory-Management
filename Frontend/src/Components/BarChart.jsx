@@ -14,50 +14,66 @@ Chart.register(
 
 const BarChart = () => {
     const [chartData, setChartData] = useState(null);
+    const [apiData, setApiData] = useState(null);
 
     useEffect(() => {
-        // Simulated API response data
-        const apiData = [
-            { "category_name": "Grocery", "total_sold": 33 },
-            { "category_name": "Sports", "total_sold": 3 },
-            { "category_name": "Instruments", "total_sold": 4 },
-            { "category_name": "Clothing", "total_sold": 12 },
-            { "category_name": "asad", "total_sold": 50 },
-        ];
+        const fetchMostSoldCategories = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/version1/inventory/most-sold-categories/', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
 
-        // Extracting labels and dataset from API response
-        const labels = apiData.map(item => item.category_name);
-        const dataValues = apiData.map(item => item.total_sold);
-
-        // Creating chart data object
-        const chartData = {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Total Sold',
-                    data: dataValues,
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.6)', // Light teal
-                        'rgba(255, 99, 132, 0.6)', // Light red
-                        'rgba(54, 162, 235, 0.6)' // Light blue
-                    ],
-                    borderColor: [
-                        'rgba(75, 192, 192, 1)', // Teal
-                        'rgba(255, 99, 132, 1)', // Red
-                        'rgba(54, 162, 235, 1)' // Blue
-                    ],
-                    borderWidth: 1
+                if (response.ok) {
+                    const data = await response.json();
+                    setApiData(data);
+                } else {
+                    console.error('API request failed');
                 }
-            ]
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         };
 
-        setChartData(chartData);
-    }, []); // Run this effect only once on component mount
+        fetchMostSoldCategories();
+    }, []);
+
+    useEffect(() => {
+        if (apiData) {
+            const labels = apiData.map(item => item.category_name);
+            const dataValues = apiData.map(item => item.total_sold);
+
+            const chartData = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Total Sold',
+                        data: dataValues,
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.6)', // Light teal
+                            'rgba(255, 99, 132, 0.6)', // Light red
+                            'rgba(54, 162, 235, 0.6)' // Light blue
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)', // Teal
+                            'rgba(255, 99, 132, 1)', // Red
+                            'rgba(54, 162, 235, 1)' // Blue
+                        ],
+                        borderWidth: 1
+                    }
+                ]
+            };
+
+            setChartData(chartData);
+        }
+    }, [apiData]);
 
     return (
-        <>
-            {chartData && <Bar data={chartData} />}
-        </ >
+        <div>
+            {chartData && apiData && (
+                <Bar data={chartData} />
+            )}
+        </div>
     );
 };
 

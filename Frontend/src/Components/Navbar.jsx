@@ -48,13 +48,14 @@ const Navbar = () => {
         }
     }, [isVisible]);
     const routes = {
-        dashboard: '/dashboard',
+        dashboard: '/Admindashboard',
         profile: '/profile',
         products: '/products',
         orders: '/orders',
-        addSupplier: '/add-supplier',
-        addCategory: '/add-category',
-        placeOrder: '/place-order'
+        addSupplier: '/addSupplier',
+        addCategory: '/addCategory',
+        placeOrder: '/products',
+        cart: "/cart"
     };
 
     const handleLogout = async (e) => {
@@ -155,12 +156,12 @@ const Navbar = () => {
                                         <li
                                             className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                                             onClick={() => {
-                                                // Handle profile click
+                                                navigate("/profile")
                                                 setShowDropdown(false);
                                                 // Navigate to profile page or show profile modal
                                             }}
                                         >
-                                            My Profile
+                                            <Link to={"/profile"}>  My Profile</Link>
                                         </li>
                                         <li
                                             className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -205,7 +206,7 @@ const Navbar = () => {
                 <div className='ml-4 mt-8 h-[85%] flex flex-col justify-between '>
 
 
-                    <div className='h-[42%]  mt-10'>
+                    <div className='h-[45%]  mt-10'>
                         <p className='ml-3 text-sm font-semibold  uppercase'>
                             Menu
                         </p>
@@ -217,25 +218,21 @@ const Navbar = () => {
                             <Link to={routes.products} className='flex items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><InventoryIcon className='ml-3' /><li className='ml-2'>Products</li></Link>
                             <Link to={routes.orders} className='flex   items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><ShoppingCartCheckoutIcon className='ml-3' /><li className='ml-2'>Orders</li></Link>
                             <Link to={routes.addSupplier} className='flex   items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><PersonAddIcon className='ml-3' /><li className='ml-2'>Add Supplier</li></Link>
-                            <Link to={routes.addCategory} className='flex   items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><CategoryIcon className='ml-3' /><li className='ml-2'>Add Category</li></Link>
                             <Link to={routes.placeOrder} className='flex   items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><AddShoppingCartIcon className='ml-3' /><li className='ml-2'>Place Order</li></Link>
+                            <Link to={routes.cart} className='flex   items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-3 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'> <DashboardIcon className='ml-2' />  <li className='ml-2'>Cart</li></Link>
+
                         </ul>
                     </div>
-                    <div className='h-[20%] mt-6  '>
+                    {/* <div className='h-[20%] mt-6  '>
                         <p className='ml-3 text-sm font-semibold  uppercase'>
                             Support
                         </p>
 
                         <ul className='flex flex-col mt-2  h-full ml-4 '>
-                            <Link to={routes.dashboard} className='flex items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-1 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'> <DashboardIcon className='ml-2' />  <li className='ml-2'>Dashboard</li></Link>
-
-
-                            <Link to={routes.profile} className='flex items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-1 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><Person2Icon className='ml-2' /><li className='ml-2'>Profile</li></Link>
-                            <Link to={routes.products} className='flex items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-1 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><InventoryIcon className='ml-2' /><li className='ml-2'>Products</li></Link>
 
                         </ul>
-                    </div>
-                    <div className='h-[20%]  '>
+                    </div> */}
+                    {/* <div className='h-[20%]  '>
                         <p className='ml-3 text-sm font-semibold  uppercase'>
                             Others
                         </p>
@@ -247,7 +244,7 @@ const Navbar = () => {
                             <Link to={routes.products} className='flex items-center font-medium text-[15px]  text-slate-300 hover:bg-slate-700 mt-1 h-10 w-[90%] hover:-translate-y-1 hover:scale-110  transition-all ease-in-out delay-80'><InventoryIcon className='ml-2' /><li className='ml-2'>Products</li></Link>
 
                         </ul>
-                    </div>
+                    </div> */}
                 </div>
             </div >
 

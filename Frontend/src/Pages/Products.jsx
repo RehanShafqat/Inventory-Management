@@ -26,13 +26,14 @@ const Products = () => {
                 <h1 className=" font-normal text-3xl py-4   text-center   mb-10">Available Products</h1>
 
                 <div className="grid grid-cols-1  w-[95%] mx-auto sm:grid-cols-2 lg:grid-cols-4  md:grid-cols-2 gap-y-8">
+                    {console.log(products)}
                     {
                         products && (
                             products.map((product, key) => {
                                 return (
                                     <div key={key}>
 
-                                        <ProductCard name={product.name} price={product.price} qty={product.quantity} key={key} id={product.product_id} url={product.image_url} />
+                                        <ProductCard name={product.name} price={product.price} qty={product.quantity} key={key} id={product.product_id} url={product.image_url} supplier_NTN={product.supplier_NTN} />
                                     </div>
                                 )
                             })
