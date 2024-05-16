@@ -2,6 +2,7 @@
 
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import toast from 'react-hot-toast';
 
 
 // Create an asynchronous thunk to fetch orders from the API
@@ -35,6 +36,12 @@ export const updateCustomerOrder = createAsyncThunk(
                 }),
             });
             const data = await response.json();
+            if (data.success === false) {
+                toast.error(data.message);
+            }
+            else if (data.success === true) {
+                window.location.reload();
+            }
             return data; // Return any relevant data from the API response
         } catch (error) {
             throw new Error('Failed to update order');

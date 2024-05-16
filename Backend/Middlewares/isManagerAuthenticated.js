@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 import db from "../Config/dbConnection.js";
 
 export const isManagerAuthenticated = async (req, res, next) => {
-    const token = req.cookies.managerToken;
+    const token = req.cookies.access_token;
     if (!token) {
         return next(new customError("You are not authenticated", 400));
     }

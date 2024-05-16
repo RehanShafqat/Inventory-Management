@@ -81,11 +81,6 @@ const ErrorPage = () => {
                     </span>
                     <span className="text-gray-500 text-xl">Sorry, We couldn't find what you are looking for!</span>
                 </div>
-                <div className="mt-6">
-                    <Link to="/Home" className="text-gray-500 font-mono text-xl bg-gray-200 p-3 rounded-md hover:shadow-md">
-                        Go back
-                    </Link>
-                </div>
             </div>
         </div>
     );

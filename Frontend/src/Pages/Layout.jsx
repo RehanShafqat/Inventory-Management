@@ -10,7 +10,6 @@ const Layout = ({ routes, children }) => {
             window.removeEventListener('resize', handleResize);
         }
     })
-    console.log(routes);
     return (
         <div className='flex'>
 

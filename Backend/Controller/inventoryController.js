@@ -175,8 +175,6 @@ export const addProduct = async (req, res, next) => {
         });
     });
 };
-
-
 export const supplierOrder = async (req, res, next) => {
     const { user_id, products } = req.body;
 
@@ -386,7 +384,6 @@ export const customerOrder = async (req, res, next) => {
 };
 export const updateCustomerOrder = async (req, res, next) => {
     const { order_id, status } = req.body;
-    console.log(order_id);
 
     try {
         // Validate the status value against enum types defined in the database schema
@@ -394,8 +391,56 @@ export const updateCustomerOrder = async (req, res, next) => {
         if (!validStatusValues.includes(status)) {
             return next(new customError(`Invalid status value: ${status}. Allowed values: ${validStatusValues.join(', ')}`, 400));
         }
+
         // Begin a transaction
         await db.beginTransaction();
+
+        // Fetch order details including products and quantities
+        const getOrderDetailsQuery = `
+            SELECT opd.product_id, opd.quantity, p.supplier_NTN
+            FROM order_product_details opd
+            JOIN products p ON opd.product_id = p.product_id
+            WHERE opd.order_id = ?
+        `;
+        const orderDetails = await new Promise((resolve, reject) => {
+            db.query(getOrderDetailsQuery, [order_id], (err, result) => {
+                if (err) {
+                    reject(new customError(err.message, 400));
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+
+        // Check availability of each product in the inventory
+        let insufficientProducts = [];
+        await Promise.all(orderDetails.map(async ({ product_id, quantity, supplier_NTN }) => {
+            const checkInventoryQuery = `
+                SELECT quantity
+                FROM products
+                WHERE product_id = ? AND supplier_NTN = ?
+            `;
+            const result = await new Promise((resolve, reject) => {
+                db.query(checkInventoryQuery, [product_id, supplier_NTN], (err, result) => {
+                    if (err) {
+                        reject(new customError(err.message, 400));
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+
+            if (!result[0].quantity || result[0].quantity < quantity) {
+                insufficientProducts.push(product_id);
+            }
+        }));
+
+        // If any product in the order is not available in sufficient quantity, rollback transaction
+        if (insufficientProducts.length > 0) {
+            await db.rollback();
+            const productNames = insufficientProducts.join(', ');
+            return next(new customError(`Insufficient quantity for product(s) with ID(s): ${productNames}`, 400));
+        }
 
         // Update the status of the order in the database
         const updateOrderStatusQuery = `
@@ -406,11 +451,30 @@ export const updateCustomerOrder = async (req, res, next) => {
         await new Promise((resolve, reject) => {
             db.query(updateOrderStatusQuery, [status, order_id], (err, result) => {
                 if (err) {
-                    return next(new customError(err.message, 400));
+                    reject(new customError(err.message, 400));
+                } else {
+                    resolve(result);
                 }
-                resolve(result);
             });
         });
+
+        // Update product quantities in the inventory (subtract ordered quantities)
+        await Promise.all(orderDetails.map(async ({ product_id, quantity, supplier_NTN }) => {
+            const updateInventoryQuery = `
+                UPDATE products
+                SET quantity = quantity - ?
+                WHERE product_id = ? AND supplier_NTN = ?
+            `;
+            await new Promise((resolve, reject) => {
+                db.query(updateInventoryQuery, [quantity, product_id, supplier_NTN], (err, result) => {
+                    if (err) {
+                        reject(new customError(err.message, 400));
+                    } else {
+                        resolve(result);
+                    }
+                });
+            });
+        }));
 
         // Commit the transaction
         await db.commit();
@@ -421,12 +485,12 @@ export const updateCustomerOrder = async (req, res, next) => {
             order_id: order_id,
             new_status: status
         });
+
     } catch (error) {
         await db.rollback();
         return next(new customError(error.message, 400));
     }
-};
-
+}
 export const getSoldData = async (req, res, next) => {
     db.query(
         "SELECT c.name AS category_name, SUM(opd.quantity) AS total_sold " +

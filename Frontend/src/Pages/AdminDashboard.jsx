@@ -9,7 +9,7 @@ import SuppliersTable from '../Components/SuppliersTable';
 import OrdersList from '../Components/OrdersList';
 import ProductCard from '../Components/ProductCard';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserCount } from '../Redux/userSlice';
+import { fetchUserCount, fetchUserDetails } from '../Redux/userSlice';
 import { fetchProducts } from '../Redux/productSlice';
 import { fetchOrders, fetchTotalSales } from '../Redux/orderSlice';
 import ErrorPage from "../Pages/ErrorPage"
@@ -20,6 +20,9 @@ const AdminDashboard = () => {
     const totalOrders = useSelector((state) => state.order.orders)
     const dispatch = useDispatch();
     useEffect(() => {
+        if (!role) {
+            dispatch(fetchUserDetails());
+        }
         if (role === 'admin') {
             if (!userCount) {
                 dispatch(fetchUserCount());

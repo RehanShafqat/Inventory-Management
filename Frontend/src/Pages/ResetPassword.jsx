@@ -24,6 +24,7 @@ const ResetPassword = () => {
                     },
                 });
                 const data = await response.json();
+                console.log(data);
                 setIsValidToken(data.success); // Update validity state based on API response
             } catch (error) {
                 console.error('Error:', error.message);
@@ -53,17 +54,19 @@ const ResetPassword = () => {
         }
 
 
-
-
+        // console.log(token);
         const toastID = toast.loading("Loding...");
         try {
             const response = await fetch("http://localhost:5000/api/version1/user/resetPassword/", {
                 method: 'POST',
                 body: JSON.stringify({ token: token, password: password }),
+
                 headers: {
                     'Content-Type': 'application/json'
                 },
-            }); const data = await response.json();
+                credentials: "include"
+            });
+            const data = await response.json();
             if (data.success === true) {
                 setTimeout(() => {
                     toast.success("Password reset succesfull", {

@@ -22,15 +22,38 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
-import { fetchUserDetails } from './Redux/userSlice';
+import { fetchUserCount, fetchUserDetails } from './Redux/userSlice';
+import { fetchProducts } from './Redux/productSlice';
+import { fetchOrders, fetchTotalSales } from './Redux/orderSlice';
+import AddAdmin from './Pages/AddAdmin';
 
 const App = () => {
   const dispatch = useDispatch();
-  const role = useSelector(state => state.user.role)
-
+  const { userCount, role } = useSelector((state) => state.user)
+  const { products } = useSelector((state) => state.product)
+  const totalSales = useSelector((state) => state.order.totalSales)
+  const totalOrders = useSelector((state) => state.order.orders)
   useEffect(() => {
-    dispatch(fetchUserDetails());
-  }, [dispatch])
+
+    if (!role) { dispatch(fetchUserDetails()) }
+    if (role == "admin") {
+      if (!userCount) {
+        dispatch(fetchUserCount());
+      }
+      if (!products) {
+        dispatch(fetchProducts());
+      }
+      if (!totalSales) {
+        dispatch((fetchTotalSales()))
+      }
+      if (!totalOrders) {
+        dispatch((fetchOrders()))
+      }
+    }
+
+  }, [dispatch, role])
+
+
 
 
   let accessibleRoutes = null;
@@ -94,6 +117,7 @@ const App = () => {
           <Route path="/addSupplier" element={<Layout routes={accessibleRoutes} children={<AddSupplier />} />} />
           <Route path="/orders" element={<Layout routes={accessibleRoutes} children={<Orders />} />} />
           <Route path="/profile" element={<Layout routes={accessibleRoutes} children={<ProfileUpdate />} />} />
+          <Route path="/addAdmin" element={<Layout routes={accessibleRoutes} children={<AddAdmin />} />} />
 
           {/* <Route path="/test" element={<Test />} /> */}
         </Routes>
