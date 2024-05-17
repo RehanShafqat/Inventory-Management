@@ -1,7 +1,6 @@
 import express from "express";
 import { userRegistration } from "../Controller/userRegistration.js"
 import { forgotPassword, resetPassword, adminDelete, userLogin, userLogout, getAdmins, changeProfile, getAllUsers, addAdmin, isTokenValidForReset, getUserDetails } from "../Controller/userController.js"
-import { isAdminAuthenticated } from "../Middlewares/isAdminAuthorised.js";
 import { isManagerAuthenticated } from "../Middlewares/isManagerAuthenticated.js";
 const userRouter = express.Router();
 
