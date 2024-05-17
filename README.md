@@ -32,7 +32,8 @@ The Inventory Management System is a web application built using Express, React,
 4. cd ../Frontend
 5. npm install
 6. Set up your .env file in the Backend directory
-7. Set up you DB connection in the config directory of Backend 
+7. Set up you DB connection in the config directory of Backend
+8. Set up dotenv in Frontend directory
 ### Running the Application 
 1. cd Backend
 2. npm run dev
