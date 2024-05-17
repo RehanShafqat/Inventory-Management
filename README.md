@@ -8,7 +8,6 @@ The Inventory Management System is a web application built using Express, React,
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Running the Application](#running-the-application)
-- [Folder Structure](#folder-structure)
 - [Database Schema](#database-schema)
 - [API Endpoints](#api-endpoints)
 - [User Roles and Permissions](#user-roles-and-permissions)
@@ -21,10 +20,10 @@ The Inventory Management System is a web application built using Express, React,
 - npm
 
 ### Technologies used
--Frontend: React, Tailwind CSS
--Backend: Express, Node.js
--Database: MySQL
--Authentication: JWT
+1. **Frontend**: React, Tailwind CSS
+2. **Backend**: Express, Node.js
+3. **Database**: MySQL (Xamp Server)
+4. **Authentication**: JWT
 
 ### Installation
 1. Clone the repository
@@ -40,35 +39,21 @@ The Inventory Management System is a web application built using Express, React,
 3. cd ../Frontend
 4. npm run dev
 
-## Folder Structure
-inventory-management-system/
-├── Frontend/                # React + Tailwind frontend
-│   ├── public/
-│   └── src/
-├── Backend/                # Express backend
-|   ├── Config/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middlewares/
-│   └── utils/
-└── README.md
-
 ## Database Schema
 The MySQL database consists of the following tables:
-### users
+- **users**
 Stores information about the system users, including admins, managers, and customers.
-### suppliers
+- **suppliers**
 Stores information about product suppliers, including their contact details and categories they supply.
-### categories
+- **categories**
 Stores the various product categories available in the system.
-### products
+- **products**
 Stores information about the products, including their details, prices, quantity, and associated supplier.
-### orders
+- **orders**
 Stores information about customer orders, including the date, status, and the user who placed the order.
-### order_product_details
+- **order_product_details**
 Stores details of the products in each order, including the quantity and associated supplier.
-### supplier_categories
+- **supplier_categories**
 Stores the relationship between suppliers and the categories they supply.
 
 ## API Endpoints
@@ -115,9 +100,9 @@ Stores the relationship between suppliers and the categories they supply.
 
 ## User Roles and Permissions
 
-Admin: Full access to all features and data. Can manage users, products, and orders.
-Manager: Can manage products and orders, but cannot manage users.
-Customer: Can view products and place orders.
+- **Admin**: Full access to all features and data. Can manage users, products, and orders.
+- **Manager**: Can manage products and orders, but cannot manage users.
+- **Customer**: Can view products and place orders.
 
 
 
