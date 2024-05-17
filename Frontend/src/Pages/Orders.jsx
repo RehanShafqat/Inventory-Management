@@ -24,7 +24,7 @@ const Orders = () => {
     return (
         <>
             {
-                role && role === 'admin' ? (
+                role && role === 'admin' || role === 'manager' ? (
                     <>
                         <div className=''>
                             <div className='overflow-x-auto mx-auto w-[90%] mt-10 max-h-[60vh] overflow-y-auto border-b-8 ' style={{ scrollbarWidth: "none" }} >

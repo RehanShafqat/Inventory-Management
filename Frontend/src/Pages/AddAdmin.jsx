@@ -55,8 +55,8 @@ const AddAdmin = () => {
             if (imageFile) {
                 const formData = new FormData();
                 formData.append('file', imageFile);
-                formData.append('upload_preset', 'Inventory_management');
-                const cloudName = 'driuxeclu';
+                formData.append('upload_preset', `${import.meta.env.VITE_CLOUD_FOLDER_NAME}`);
+                const cloudName = import.meta.env.VITE_CLOUD_NAME;
 
                 const response = await fetch(
                     `https://api.cloudinary.com/v1_1/${cloudName}/upload`,

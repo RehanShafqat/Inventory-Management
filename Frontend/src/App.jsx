@@ -81,7 +81,7 @@ const App = () => {
     { name: 'Place Order', route: '/products', icon: AddShoppingCartIcon },
     { name: 'Cart', route: '/cart', icon: ShoppingCartIcon },
     { name: 'Add Product', route: '/addProduct', icon: AddShoppingCartIcon },
-    { name: 'Add admin', route: '/addProduct', icon: AddShoppingCartIcon },
+    { name: 'Add admin', route: '/addAdmin', icon: AddShoppingCartIcon },
     ]
   }
 

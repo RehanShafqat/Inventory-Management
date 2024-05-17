@@ -14,12 +14,6 @@ const ProfileUpdate = () => {
         }
     })
 
-
-    const handleSave = () => {
-        console.log('Saving profile...');
-        // Implement save logic here, e.g., dispatch an action to update user profile
-    };
-
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         setSelectedImage(file);
@@ -34,8 +28,8 @@ const ProfileUpdate = () => {
             if (selectedImage) {
                 const formData = new FormData();
                 formData.append('file', selectedImage);
-                formData.append('upload_preset', 'Inventory_management');
-                const cloudName = 'driuxeclu';
+                formData.append('upload_preset', `${import.meta.env.VITE_CLOUD_FOLDER_NAME}`);
+                const cloudName = import.meta.env.VITE_CLOUD_NAME;
 
                 const response = await fetch(
                     `https://api.cloudinary.com/v1_1/${cloudName}/upload`,

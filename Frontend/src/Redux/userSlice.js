@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { toast } from 'react-hot-toast';
 
 // Async thunk action to handle user login
 export const loginUser = createAsyncThunk(

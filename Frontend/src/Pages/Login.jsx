@@ -40,19 +40,12 @@ const Login = () => {
             });
             console.log(role);
             if (role === "admin" || role === "manager") {
-                console.log("i am up");
                 navigate("/AdminDashboard");
             } else if (role === "customer") {
                 navigate("/home");
             }
         }
-        if (error) {
-            // Display error toast
-            toast.error(error, {
-                id: loadingToastId,
-            });
-        }
-    }, [success, error, role, navigate, loadingToastId]);
+    }, [success, role, navigate, loadingToastId]);
 
     return (
         <div className="bg-white dark:bg-gray-900">

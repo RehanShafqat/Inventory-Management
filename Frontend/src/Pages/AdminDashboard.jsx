@@ -23,7 +23,8 @@ const AdminDashboard = () => {
         if (!role) {
             dispatch(fetchUserDetails());
         }
-        if (role === 'admin') {
+
+        if (role === 'admin' || role === 'manager') {
             if (!userCount) {
                 dispatch(fetchUserCount());
             }
@@ -42,7 +43,7 @@ const AdminDashboard = () => {
     return (
         <>
             {
-                role === 'admin' && (
+                role === 'admin' || role === 'manager' && (
                     <div className='h-fit w-[100%] bg-bgWhite flex  '>
                         <div className='w-[95%] mx-auto flex-col  mt-10 '>
                             {/* First Row */}

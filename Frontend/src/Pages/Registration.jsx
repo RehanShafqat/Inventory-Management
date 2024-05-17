@@ -46,8 +46,8 @@ const Registration = () => {
             if (imageFile) {
                 const formData = new FormData();
                 formData.append('file', imageFile);
-                formData.append('upload_preset', 'Inventory_management');
-                const cloudName = 'driuxeclu';
+                formData.append('upload_preset', `${import.meta.env.VITE_CLOUD_FOLDER_NAME}`);
+                const cloudName = import.meta.env.VITE_CLOUD_NAME;
 
                 const response = await fetch(
                     `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
@@ -66,7 +66,6 @@ const Registration = () => {
             return null;
         }
     };
-
     const handleUploading = async () => {
         const toastID = toast.loading("Registering....", {
             style: {
@@ -95,10 +94,11 @@ const Registration = () => {
             };
 
             const response = await fetch('http://localhost:5000/api/version1/user/customer/register', requestOptions);
+            const data = await response.json();
             if (!response.ok) {
+                toast.error("Error resetting your password");
             }
 
-            const data = await response.json();
 
             if (data && data.RESULT) {
                 setTimeout(() => {
