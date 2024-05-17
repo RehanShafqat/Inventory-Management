@@ -1,3 +1,11 @@
+-- CREATE TABLE users (
+--     user_id INT(255) AUTO_INCREMENT PRIMARY KEY,
+--     email VARCHAR(255) NOT NULL UNIQUE,
+--     role VARCHAR(20) NOT NULL,
+--     image_URL VARCHAR(1000) DEFAULT NULL,
+--     password VARCHAR(1000) NOT NULL,
+--     username VARCHAR(255) NOT NULL
+-- ) 
 -- CREATE TABLE suppliers (
 --   supplier_id INT AUTO_INCREMENT PRIMARY KEY,
 --   NTN_number VARCHAR(20) UNIQUE NOT NULL,
@@ -5,6 +13,7 @@
 --   name VARCHAR(255) NOT NULL,
 --   categories_supplied JSON
 -- );
+
 
 -- -- Create the supplier_categories table with ON DELETE CASCADE
 -- CREATE TABLE supplier_categories (

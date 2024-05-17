@@ -26,6 +26,7 @@ import { fetchUserCount, fetchUserDetails } from './Redux/userSlice';
 import { fetchProducts } from './Redux/productSlice';
 import { fetchOrders, fetchTotalSales } from './Redux/orderSlice';
 import AddAdmin from './Pages/AddAdmin';
+import ErrorPage from './Pages/ErrorPage';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -106,6 +107,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/register" element={<Registration />} />
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/home" element={<Layout routes={accessibleRoutes} children={<Home />} />} />
           <Route path="/forgot" element={<ForgotPassword />} />
@@ -118,6 +120,7 @@ const App = () => {
           <Route path="/orders" element={<Layout routes={accessibleRoutes} children={<Orders />} />} />
           <Route path="/profile" element={<Layout routes={accessibleRoutes} children={<ProfileUpdate />} />} />
           <Route path="/addAdmin" element={<Layout routes={accessibleRoutes} children={<AddAdmin />} />} />
+          <Route path="*" element={<ErrorPage />}></Route>
 
           {/* <Route path="/test" element={<Test />} /> */}
         </Routes>

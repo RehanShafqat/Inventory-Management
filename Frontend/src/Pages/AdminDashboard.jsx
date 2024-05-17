@@ -43,7 +43,7 @@ const AdminDashboard = () => {
     return (
         <>
             {
-                role === 'admin' || role === 'manager' && (
+               ( role === 'admin' || role === 'manager') && (
                     <div className='h-fit w-[100%] bg-bgWhite flex  '>
                         <div className='w-[95%] mx-auto flex-col  mt-10 '>
                             {/* First Row */}

@@ -132,8 +132,7 @@ export const resetPassword = async (req, res, next) => {
 
 export const isTokenValidForReset = (req, res, next) => {
     const { token } = req.body;
-    console.log(req.params);
-    console.log(token);
+  
     if (!token) {
         return next(new customError("Token not found", 400));
     }
@@ -168,7 +167,6 @@ export const isTokenValidForReset = (req, res, next) => {
 }
 export const getUserDetails = (req, res, next) => {
     const token = req.cookies.access_token;
-    console.log(req.cookies);
     if (!token) {
         return next(new customError("Token not found", 400));
     }
@@ -228,7 +226,6 @@ export const getAdmins = (req, res, next) => {
 }
 export const changeProfile = (req, res, next) => {
     const { user_id, image_URL } = req.body;
-    console.log("hello");
     if (!user_id || !image_URL) {
         return next(new customError("Enter all fields", 400));
     }
@@ -237,7 +234,6 @@ export const changeProfile = (req, res, next) => {
         if (err) {
             return next(new customError(err.message, 400));
         }
-        console.log(result);
         res.status(200).json({
             success: true,
             message: "Profile picture updated !"
