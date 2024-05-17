@@ -12,6 +12,10 @@ The Inventory Management System is a web application built using Express, React,
 - [API Endpoints](#api-endpoints)
 - [User Roles and Permissions](#user-roles-and-permissions)
 
+
+![inventory-Dashboard](https://github.com/RehanShafqat/Inventory-Management/assets/124881507/908d5b88-2aab-43a1-becc-13da51449dbc)
+
+
 ## Getting Started
 
 ### Prerequisites
