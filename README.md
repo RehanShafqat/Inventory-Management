@@ -105,8 +105,8 @@ Stores the relationship between suppliers and the categories they supply.
 
 ## User Roles and Permissions
 
-- **Admin**: Full access to all features and data. Can manage users, products, and orders.
-- **Manager**: Can manage products and orders, but cannot manage users.
+- **Admin**: Full access to all features and data. Can manage products and orders.
+- **Manager**: Can manage products,orders,admins .
 - **Customer**: Can view products and place orders.
 
 
